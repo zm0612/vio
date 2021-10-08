@@ -48,9 +48,9 @@ int main(int argc, char **argv) {
     google::InitGoogleLogging(argv[0]);
     FLAGS_colorlogtostderr = true;
 
-    double a = 1.0, b = 2.0, c = 1.0;
-    int N = 100;
-    double w_sigma = 1.0;
+    double a = 1.5, b = 2.8, c = 1.2;
+    int N = 300;
+    double w_sigma = 0.5;
 
     std::default_random_engine random_engine;
     std::normal_distribution<double> noise(0, w_sigma);
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
     least_square_solver.AddVertex(vertex_ptr);
 
     for (int i = 0; i < N; ++i) {
-        double x = i / 100.0;
+        double x = i * 1.0 / N;
         double n = noise(random_engine);
         double y = std::exp(a * x * x + b * x + c) + n;
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     std::cout << "-------After optimization--------" << std::endl;
     std::cout << vertex_ptr->Parameters().transpose() << std::endl;
     std::cout << "----------ground truth-----------" << std::endl;
-    std::cout << "   1.0,  2.0,  1.0   " << std::endl;
+    std::cout << "        1.5,  2.8,  1.2   " << std::endl;
 
     return 0;
 }

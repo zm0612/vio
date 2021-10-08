@@ -59,6 +59,8 @@ bool Problem::AddEdge(shared_ptr<Edge> edge) {
 
 
 bool Problem::Solve(int iterations) {
+    std::fstream save_mu("./mu.txt", std::ios::out | std::ios::trunc);
+    std::fstream save_final_mu("./final_mu.txt", std::ios::out | std::ios::trunc);
     if (edges_.size() == 0 || verticies_.size() == 0) {
         std::cerr << "\nCannot solve problem without edges or verticies" << std::endl;
         return false;
@@ -71,15 +73,13 @@ bool Problem::Solve(int iterations) {
     MakeHessian();
     // LM 初始化
     ComputeLambdaInitLM();
+    save_mu << currentLambda_ << std::endl;
     // LM 算法迭代求解
     bool stop = false;
     int iter = 0;
     while (!stop && (iter < iterations)) {
         std::cout << "iter: " << iter << " , chi= " << currentChi_ << " , Lambda= " << currentLambda_ << std::endl;
-        std::cout << "vertex: " << verticies_.begin()->second->Parameters().transpose() << std::endl;
-        std::cout << "delta_x: " << delta_x_ << std::endl;
-        std::cout << "b: " << b_ << std::endl;
-        std::cout << "hessian: \n" << Hessian_ << std::endl << std::endl;
+        save_final_mu << currentLambda_ << std::endl;
         bool oneStepSuccess = false;
         int false_cnt = 0;
         while (!oneStepSuccess)  // 不断尝试 Lambda, 直到成功迭代一步
@@ -101,6 +101,7 @@ bool Problem::Solve(int iterations) {
             UpdateStates();
             // 判断当前步是否可行以及 LM 的 lambda 怎么更新
             oneStepSuccess = IsGoodStepInLM();
+            save_mu << currentLambda_ << std::endl;
             // 后续处理，
             if (oneStepSuccess) {
                 // 在新线性化点 构建 hessian
@@ -126,6 +127,8 @@ bool Problem::Solve(int iterations) {
     }
     std::cout << "problem solve cost: " << t_solve.toc() << " ms" << std::endl;
     std::cout << "   makeHessian cost: " << t_hessian_cost_ << " ms" << std::endl;
+    save_mu.close();
+    save_final_mu.close();
     return true;
 }
 
@@ -257,7 +260,6 @@ void Problem::ComputeLambdaInitLM() {
         maxDiagonal = std::max(fabs(Hessian_(i, i)), maxDiagonal);
     }
     double tau = 1e-5;
-    std::cout << "max_value: " << maxDiagonal << std::endl;
     currentLambda_ = tau * maxDiagonal;
 }
 
@@ -282,7 +284,6 @@ bool Problem::IsGoodStepInLM() {
     double scale = 0;
     scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
     scale += 1e-3;    // make sure it's non-zero :)
-    std::cout << "L_value: " << scale << std::endl;
 
     // recompute residuals after update state
     // 统计所有的残差
@@ -291,10 +292,8 @@ bool Problem::IsGoodStepInLM() {
         edge.second->ComputeResidual();
         tempChi += edge.second->Chi2();
     }
-    std::cout << "temp chi2: " << tempChi << std::endl;
 
     double rho = (currentChi_ - tempChi) / scale;
-    std::cout << "rho: " << rho << std::endl;
     if (rho > 0 && isfinite(tempChi))   // last step was good, 误差在下降
     {
         double alpha = 1. - pow((2 * rho - 1), 3);

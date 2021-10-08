@@ -17,14 +17,21 @@ public:
     }
 
     void TestRobustKernelFunction() {
-        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunction(1.5), 1.092407891);
-        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunctionFirstDerivative(1.5), 0.5466942679);
-        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunctionSecondDerivative(1.5), -0.1652130969);
+        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunction(2.0), 0.7442918359);
+        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunctionFirstDerivative(2.0), 0.7398457931);
+        EXPECT_FLOAT_EQ(least_square_solver_.RobustKernelFunctionSecondDerivative(2.0), -0.0962369982);
+    }
+
+    void TestRobustKernelFunctionCoefficient() {
+        double chi2 = 2.0;
+        Eigen::Matrix<double, 1,1> f(std::sqrt(2.0));
+        std::cout << least_square_solver_.ComputeW(chi2, f) << std::endl;
     }
 };
 
 TEST_F(TestLeastSquareSolver, TestRobustKernelFunction) {
     TestRobustKernelFunction();
+    TestRobustKernelFunctionCoefficient();
 }
 
 int main(int argc, char **argv) {

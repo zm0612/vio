@@ -65,7 +65,7 @@ private:
     double current_chi2_;
     double current_mu_;
     double v_;
-    const double c_ = 1.345;
+    const double c_ = 2.3849;
 };
 
 #endif //LEAST_SQUARE_LEAST_SQUARE_SOLVER_H
