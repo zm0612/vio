@@ -2,11 +2,11 @@
 
 ## 1.绘制信息矩阵示意图
 
-<img src="/home/meng/code_my/vio/lecture_4_sliding_window/doc/Q_1.png" alt="Q_1" style="zoom: 67%;" />
+<img src="doc/Q_1.png" alt="Q_1" style="zoom:67%;" />
 
 ### **解 1：**
 
-<img src="/home/meng/code_my/vio/lecture_4_sliding_window/doc/Q_1_a.jpg" alt="Q_1_a" style="zoom: 33%;" />
+<img src="doc/Q_1_a.jpg" alt="Q_1_a" style="zoom:33%;" />
 
 根据姿态的残差以及观测的残差可以发现，如果两个状态状态之间有残差，则必有关于状态量的雅克比(上图红色方块)，而两个无关的独立状态，它们之间的雅克比为0(如上图黄色方块).
 
@@ -14,13 +14,13 @@
 
 由于相机姿态被marg掉了，所有和该状态量相关的状态量都两两产生了相关，因此可以marg之后的关系如下图所示：
 
-<img src="/home/meng/code_my/vio/lecture_4_sliding_window/doc/Q_1_b.jpg" alt="Q_1_b" style="zoom:33%;" />
+<img src="doc/Q_1_b.jpg" alt="Q_1_b" style="zoom:33%;" />
 
 > 其中紫色的边是要删除，蓝色是新增加的关系。
 
 对应的信息矩阵如下图所示：
 
-<img src="/home/meng/code_my/vio/lecture_4_sliding_window/doc/Q_1_c.jpg" alt="Q_1_c" style="zoom:33%;" />
+<img src="doc/Q_1_c.jpg" alt="Q_1_c" style="zoom:33%;" />
 
 ## 2. 证明信息矩阵和协方差的逆之间的关系
 
