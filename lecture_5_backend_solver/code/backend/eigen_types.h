@@ -1,7 +1,6 @@
 //
 // Created by gaoxiang19 on 11/3/18.
 //
-
 #ifndef MYSLAM_EIGEN_TYPES_H
 #define MYSLAM_EIGEN_TYPES_H
 
@@ -104,7 +103,5 @@ typedef std::vector<Vec3f, Eigen::aligned_allocator<Vec3f>> VecVec3f;
 
 // Map of Eigen matrix
 typedef std::map<unsigned long, MatXX, std::less<unsigned long>, Eigen::aligned_allocator<MatXX>> MapMatXX;
-
-
 
 #endif

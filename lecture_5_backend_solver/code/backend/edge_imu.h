@@ -20,8 +20,9 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     explicit EdgeImu(std::shared_ptr<IMUIntegration> pre_integration)
-        : pre_integration_(pre_integration),
-          Edge(15, 4, std::vector<std::string>{"VertexPose", "VertexMotion", "VertexPose", "VertexMotion"}) {
+            : pre_integration_(pre_integration),
+              Edge(15, 4,
+                   std::vector<std::string>{"VertexPose", "VertexMotion", "VertexPose", "VertexMotion"}) {
         if (pre_integration_) {
             pre_integration_->GetJacobians(dr_dbg_, dv_dbg_, dv_dba_, dp_dbg_, dp_dba_);
             Mat99 cov_meas = pre_integration_->GetCovarianceMeasurement();

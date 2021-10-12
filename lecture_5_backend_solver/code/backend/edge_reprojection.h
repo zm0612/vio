@@ -23,7 +23,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     EdgeReprojection(const Vec3 &pts_i, const Vec3 &pts_j)
-        : Edge(2, 3, std::vector<std::string>{"VertexInverseDepth", "VertexPose", "VertexPose"}) {
+            : Edge(2, 3, std::vector<std::string>{"VertexInverseDepth", "VertexPose", "VertexPose"}) {
         pts_i_ = pts_i;
         pts_j_ = pts_j;
     }
@@ -58,7 +58,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     EdgeReprojectionXYZ(const Vec3 &pts_i)
-        : Edge(2, 2, std::vector<std::string>{"VertexXYZ", "VertexPose"}) {
+            : Edge(2, 2, std::vector<std::string>{"VertexXYZ", "VertexPose"}) {
         obs_ = pts_i;
     }
 
@@ -90,8 +90,8 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     EdgeReprojectionPoseOnly(const Vec3 &landmark_world, const Mat33 &K) :
-        Edge(2, 1, std::vector<std::string>{"VertexPose"}),
-        landmark_world_(landmark_world), K_(K) {}
+            Edge(2, 1, std::vector<std::string>{"VertexPose"}),
+            landmark_world_(landmark_world), K_(K) {}
 
     /// 返回边的类型信息
     virtual std::string TypeInfo() const override { return "EdgeReprojectionPoseOnly"; }

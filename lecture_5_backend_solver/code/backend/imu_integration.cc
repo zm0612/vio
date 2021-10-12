@@ -39,7 +39,8 @@ void IMUIntegration::Propagate(double dt, const Vec3 &acc, const Vec3 &gyr) {
     A_.block<3, 3>(6, 6) = Mat33::Identity();
     B_.block<3, 3>(6, 3) = 0.5 * delta_r_.matrix() * dt * dt;
 
-    covariance_measurement_ = A_ * covariance_measurement_ * A_.transpose() + B_ * noise_measurement_ * B_.transpose();
+    covariance_measurement_ =
+            A_ * covariance_measurement_ * A_.transpose() + B_ * noise_measurement_ * B_.transpose();
 }
 
 void IMUIntegration::Repropagate() {

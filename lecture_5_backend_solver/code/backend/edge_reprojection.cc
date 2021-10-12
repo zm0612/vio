@@ -68,7 +68,7 @@ void EdgeReprojection::ComputeJacobians() {
     Mat33 ric = qic.toRotationMatrix();
     Mat23 reduce(2, 3);
     reduce << 1. / dep_j, 0, -pts_camera_j(0) / (dep_j * dep_j),
-        0, 1. / dep_j, -pts_camera_j(1) / (dep_j * dep_j);
+            0, 1. / dep_j, -pts_camera_j(1) / (dep_j * dep_j);
 //    reduce = information_ * reduce;
 
     Eigen::Matrix<double, 2, 6> jacobian_pose_i;
@@ -84,7 +84,8 @@ void EdgeReprojection::ComputeJacobians() {
     jacobian_pose_j.leftCols<6>() = reduce * jaco_j;
 
     Eigen::Vector2d jacobian_feature;
-    jacobian_feature = reduce * ric.transpose() * Rj.transpose() * Ri * ric * pts_i_ * -1.0 / (inv_dep_i * inv_dep_i);
+    jacobian_feature =
+            reduce * ric.transpose() * Rj.transpose() * Ri * ric * pts_i_ * -1.0 / (inv_dep_i * inv_dep_i);
 
     jacobians_[0] = jacobian_feature;
     jacobians_[1] = jacobian_pose_i;
@@ -146,7 +147,7 @@ void EdgeReprojectionXYZ::ComputeJacobians() {
     Mat33 ric = qic.toRotationMatrix();
     Mat23 reduce(2, 3);
     reduce << 1. / dep_i, 0, -pts_camera_i(0) / (dep_i * dep_i),
-        0, 1. / dep_i, -pts_camera_i(1) / (dep_i * dep_i);
+            0, 1. / dep_i, -pts_camera_i(1) / (dep_i * dep_i);
 
     Eigen::Matrix<double, 2, 6> jacobian_pose_i;
     Eigen::Matrix<double, 3, 6> jaco_i;
@@ -165,8 +166,8 @@ void EdgeReprojectionXYZ::ComputeJacobians() {
 void EdgeReprojectionPoseOnly::ComputeResidual() {
     VecX pose_params = verticies_[0]->Parameters();
     Sophus::SE3d pose(
-        Qd(pose_params[6], pose_params[3], pose_params[4], pose_params[5]),
-        pose_params.head<3>()
+            Qd(pose_params[6], pose_params[3], pose_params[4], pose_params[5]),
+            pose_params.head<3>()
     );
 
     Vec3 pc = pose * landmark_world_;

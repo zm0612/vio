@@ -40,7 +40,7 @@ public:
 
 private:
     Vec3 Pp_;   // pose prior
-    Qd   Qp_;   // Rotation prior
+    Qd Qp_;   // Rotation prior
 };
 
 }

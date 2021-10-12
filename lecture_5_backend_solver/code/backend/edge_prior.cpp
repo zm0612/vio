@@ -47,12 +47,12 @@ void EdgeSE3Prior::ComputeResidual() {
     Sophus::SO3d ri(Qi);
     Sophus::SO3d rp(Qp_);
     Sophus::SO3d res_r = rp.inverse() * ri;
-    residual_.block<3,1>(0,0) = Sophus::SO3d::log(res_r);
+    residual_.block<3, 1>(0, 0) = Sophus::SO3d::log(res_r);
 #else
     residual_.block<3,1>(0,0) = 2 * (Qp_.inverse() * Qi).vec();
 #endif
     // translation error
-    residual_.block<3,1>(3,0) = Pi - Pp_;
+    residual_.block<3, 1>(3, 0) = Pi - Pp_;
 //    std::cout << residual_.transpose() <<std::endl;
 }
 
@@ -69,11 +69,11 @@ void EdgeSE3Prior::ComputeJacobians() {
     Sophus::SO3d rp(Qp_);
     Sophus::SO3d res_r = rp.inverse() * ri;
     // http://rpg.ifi.uzh.ch/docs/RSS15_Forster.pdf  公式A.32
-    jacobian_pose_i.block<3,3>(0,3) = Sophus::SO3d::JacobianRInv(res_r.log());
+    jacobian_pose_i.block<3, 3>(0, 3) = Sophus::SO3d::JacobianRInv(res_r.log());
 #else
     jacobian_pose_i.block<3,3>(0,3) = Qleft(Qp_.inverse() * Qi).bottomRightCorner<3, 3>();
 #endif
-    jacobian_pose_i.block<3,3>(3,0) = Mat33::Identity();
+    jacobian_pose_i.block<3, 3>(3, 0) = Mat33::Identity();
 
     jacobians_[0] = jacobian_pose_i;
 //    std::cout << jacobian_pose_i << std::endl;

@@ -18,7 +18,7 @@ struct Feature {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     explicit Feature(
-        const Vec2f &pixel, std::shared_ptr<Frame> ref) {
+            const Vec2f &pixel, std::shared_ptr<Frame> ref) {
         ref_frame = ref;
     }
 

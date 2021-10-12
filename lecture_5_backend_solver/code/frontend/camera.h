@@ -15,11 +15,11 @@ struct PinholeCamera {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     PinholeCamera(
-        const float &_fx, const float &_fy,
-        const float &_cx, const float &_cy,
-        const Sophus::SE3 &extrinsics,
-        const float _bf = 0)
-        : fx(_fx), fy(_fy), cx(_cx), cy(_cy), bf(_bf) {
+            const float &_fx, const float &_fy,
+            const float &_cx, const float &_cy,
+            const Sophus::SE3 &extrinsics,
+            const float _bf = 0)
+            : fx(_fx), fy(_fy), cx(_cx), cy(_cy), bf(_bf) {
         K << fx, 0, cx, 0, fy, cy, 0, 0, 1;
         fxinv = 1 / fx;
         fyinv = 1 / fy;

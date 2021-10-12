@@ -87,7 +87,7 @@ macro(EIGEN_REPORT_NOT_FOUND REASON_MSG)
         message(STATUS "Failed to find Eigen - " ${REASON_MSG} ${ARGN})
     elseif (Eigen_FIND_REQUIRED)
         message(FATAL_ERROR "Failed to find Eigen - " ${REASON_MSG} ${ARGN})
-    else()
+    else ()
         # Neither QUIETLY nor REQUIRED, use no priority which emits a message
         # but continues configuration and allows generation.
         message("-- Failed to find Eigen - " ${REASON_MSG} ${ARGN})
@@ -107,13 +107,13 @@ unset(EIGEN_FOUND)
 # components, and has not specified any hints for the search locations, then
 # prefer an exported configuration if available.
 if (NOT DEFINED EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION
-        AND NOT EIGEN_INCLUDE_DIR_HINTS)
+    AND NOT EIGEN_INCLUDE_DIR_HINTS)
     message(STATUS "No preference for use of exported Eigen CMake configuration "
-            "set, and no hints for include directory provided. "
-            "Defaulting to preferring an installed/exported Eigen CMake configuration "
-            "if available.")
+        "set, and no hints for include directory provided. "
+        "Defaulting to preferring an installed/exported Eigen CMake configuration "
+        "if available.")
     set(EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION TRUE)
-endif()
+endif ()
 
 if (EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION)
     # Try to find an exported CMake configuration for Eigen.
@@ -147,96 +147,96 @@ if (EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION)
     #
     # [1] http://www.cmake.org/cmake/help/v2.8.11/cmake.html#command:find_package
     find_package(Eigen3 QUIET
-            NO_MODULE
-            NO_CMAKE_PACKAGE_REGISTRY
-            NO_CMAKE_BUILDS_PATH)
+        NO_MODULE
+        NO_CMAKE_PACKAGE_REGISTRY
+        NO_CMAKE_BUILDS_PATH)
     if (EIGEN3_FOUND)
         message(STATUS "Found installed version of Eigen: ${Eigen3_DIR}")
-    else()
+    else ()
         # Failed to find an installed version of Eigen, repeat search allowing
         # exported build directories.
         message(STATUS "Failed to find installed Eigen CMake configuration, "
-                "searching for Eigen build directories exported with CMake.")
+            "searching for Eigen build directories exported with CMake.")
         # Again pass NO_CMAKE_BUILDS_PATH, as we know that Eigen is exported and
         # do not want to treat projects built with the CMake GUI preferentially.
         find_package(Eigen3 QUIET
-                NO_MODULE
-                NO_CMAKE_BUILDS_PATH)
+            NO_MODULE
+            NO_CMAKE_BUILDS_PATH)
         if (EIGEN3_FOUND)
             message(STATUS "Found exported Eigen build directory: ${Eigen3_DIR}")
-        endif()
-    endif()
+        endif ()
+    endif ()
     if (EIGEN3_FOUND)
         set(FOUND_INSTALLED_EIGEN_CMAKE_CONFIGURATION TRUE)
         set(EIGEN_FOUND ${EIGEN3_FOUND})
         set(EIGEN_INCLUDE_DIR "${EIGEN3_INCLUDE_DIR}" CACHE STRING
-                "Eigen include directory" FORCE)
-    else()
+            "Eigen include directory" FORCE)
+    else ()
         message(STATUS "Failed to find an installed/exported CMake configuration "
-                "for Eigen, will perform search for installed Eigen components.")
-    endif()
-endif()
+            "for Eigen, will perform search for installed Eigen components.")
+    endif ()
+endif ()
 
 if (NOT EIGEN_FOUND)
     # Search user-installed locations first, so that we prefer user installs
     # to system installs where both exist.
     list(APPEND EIGEN_CHECK_INCLUDE_DIRS
-            /usr/local/include
-            /usr/local/homebrew/include # Mac OS X
-            /opt/local/var/macports/software # Mac OS X.
-            /opt/local/include
-            /usr/include)
+        /usr/local/include
+        /usr/local/homebrew/include # Mac OS X
+        /opt/local/var/macports/software # Mac OS X.
+        /opt/local/include
+        /usr/include)
     # Additional suffixes to try appending to each search path.
     list(APPEND EIGEN_CHECK_PATH_SUFFIXES
-            eigen3 # Default root directory for Eigen.
-            Eigen/include/eigen3 # Windows (for C:/Program Files prefix) < 3.3
-            Eigen3/include/eigen3 ) # Windows (for C:/Program Files prefix) >= 3.3
+        eigen3 # Default root directory for Eigen.
+        Eigen/include/eigen3 # Windows (for C:/Program Files prefix) < 3.3
+        Eigen3/include/eigen3) # Windows (for C:/Program Files prefix) >= 3.3
 
     # Search supplied hint directories first if supplied.
     find_path(EIGEN_INCLUDE_DIR
-            NAMES Eigen/Core
-            HINTS ${EIGEN_INCLUDE_DIR_HINTS}
-            PATHS ${EIGEN_CHECK_INCLUDE_DIRS}
-            PATH_SUFFIXES ${EIGEN_CHECK_PATH_SUFFIXES})
+        NAMES Eigen/Core
+        HINTS ${EIGEN_INCLUDE_DIR_HINTS}
+        PATHS ${EIGEN_CHECK_INCLUDE_DIRS}
+        PATH_SUFFIXES ${EIGEN_CHECK_PATH_SUFFIXES})
 
     if (NOT EIGEN_INCLUDE_DIR OR
-            NOT EXISTS ${EIGEN_INCLUDE_DIR})
+        NOT EXISTS ${EIGEN_INCLUDE_DIR})
         eigen_report_not_found(
-                "Could not find eigen3 include directory, set EIGEN_INCLUDE_DIR to "
-                "path to eigen3 include directory, e.g. /usr/local/include/eigen3.")
+            "Could not find eigen3 include directory, set EIGEN_INCLUDE_DIR to "
+            "path to eigen3 include directory, e.g. /usr/local/include/eigen3.")
     endif (NOT EIGEN_INCLUDE_DIR OR
-            NOT EXISTS ${EIGEN_INCLUDE_DIR})
+        NOT EXISTS ${EIGEN_INCLUDE_DIR})
 
     # Mark internally as found, then verify. EIGEN_REPORT_NOT_FOUND() unsets
     # if called.
     set(EIGEN_FOUND TRUE)
-endif()
+endif ()
 
 # Extract Eigen version from Eigen/src/Core/util/Macros.h
 if (EIGEN_INCLUDE_DIR)
     set(EIGEN_VERSION_FILE ${EIGEN_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h)
     if (NOT EXISTS ${EIGEN_VERSION_FILE})
         eigen_report_not_found(
-                "Could not find file: ${EIGEN_VERSION_FILE} "
-                "containing version information in Eigen install located at: "
-                "${EIGEN_INCLUDE_DIR}.")
+            "Could not find file: ${EIGEN_VERSION_FILE} "
+            "containing version information in Eigen install located at: "
+            "${EIGEN_INCLUDE_DIR}.")
     else (NOT EXISTS ${EIGEN_VERSION_FILE})
         file(READ ${EIGEN_VERSION_FILE} EIGEN_VERSION_FILE_CONTENTS)
 
         string(REGEX MATCH "#define EIGEN_WORLD_VERSION [0-9]+"
-                EIGEN_WORLD_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
+            EIGEN_WORLD_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
         string(REGEX REPLACE "#define EIGEN_WORLD_VERSION ([0-9]+)" "\\1"
-                EIGEN_WORLD_VERSION "${EIGEN_WORLD_VERSION}")
+            EIGEN_WORLD_VERSION "${EIGEN_WORLD_VERSION}")
 
         string(REGEX MATCH "#define EIGEN_MAJOR_VERSION [0-9]+"
-                EIGEN_MAJOR_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
+            EIGEN_MAJOR_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
         string(REGEX REPLACE "#define EIGEN_MAJOR_VERSION ([0-9]+)" "\\1"
-                EIGEN_MAJOR_VERSION "${EIGEN_MAJOR_VERSION}")
+            EIGEN_MAJOR_VERSION "${EIGEN_MAJOR_VERSION}")
 
         string(REGEX MATCH "#define EIGEN_MINOR_VERSION [0-9]+"
-                EIGEN_MINOR_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
+            EIGEN_MINOR_VERSION "${EIGEN_VERSION_FILE_CONTENTS}")
         string(REGEX REPLACE "#define EIGEN_MINOR_VERSION ([0-9]+)" "\\1"
-                EIGEN_MINOR_VERSION "${EIGEN_MINOR_VERSION}")
+            EIGEN_MINOR_VERSION "${EIGEN_MINOR_VERSION}")
 
         # This is on a single line s/t CMake does not interpret it as a list of
         # elements and insert ';' separators which would result in 3.;2.;0 nonsense.
@@ -252,12 +252,12 @@ endif (EIGEN_FOUND)
 # Handle REQUIRED / QUIET optional arguments and version.
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Eigen
-        REQUIRED_VARS EIGEN_INCLUDE_DIRS
-        VERSION_VAR EIGEN_VERSION)
+    REQUIRED_VARS EIGEN_INCLUDE_DIRS
+    VERSION_VAR EIGEN_VERSION)
 
 # Only mark internal variables as advanced if we found Eigen, otherwise
 # leave it visible in the standard GUI for the user to set manually.
 if (EIGEN_FOUND)
     mark_as_advanced(FORCE EIGEN_INCLUDE_DIR
-            Eigen3_DIR) # Autogenerated by find_package(Eigen3)
+        Eigen3_DIR) # Autogenerated by find_package(Eigen3)
 endif (EIGEN_FOUND)

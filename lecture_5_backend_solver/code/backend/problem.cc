@@ -30,7 +30,7 @@ void Problem::LogoutVectorSize() {
 }
 
 Problem::Problem(ProblemType problemType) :
-    problemType_(problemType) {
+        problemType_(problemType) {
     LogoutVectorSize();
     verticies_marg_.clear();
 }
@@ -171,7 +171,8 @@ bool Problem::Solve(int iterations) {
     bool stop = false;
     int iter = 0;
     while (!stop && (iter < iterations)) {
-        std::cout << "iter: " << iter << " , chi= " << currentChi_ << " , Lambda= " << currentLambda_ << std::endl;
+        std::cout << "iter: " << iter << " , chi= " << currentChi_ << " , Lambda= " << currentLambda_
+                  << std::endl;
         bool oneStepSuccess = false;
         int false_cnt = 0;
         while (!oneStepSuccess)  // 不断尝试 Lambda, 直到成功迭代一步
@@ -206,7 +207,7 @@ bool Problem::Solve(int iterations) {
 //                stop = (b_max <= 1e-12);
                 false_cnt = 0;
             } else {
-                false_cnt ++;
+                false_cnt++;
                 RollbackStates();   // 误差没下降，回滚
             }
         }
@@ -251,9 +252,9 @@ void Problem::SetOrdering() {
     if (problemType_ == ProblemType::SLAM_PROBLEM) {
         // 这里要把 landmark 的 ordering 加上 pose 的数量，就保持了 landmark 在后,而 pose 在前
         ulong all_pose_dimension = ordering_poses_;
-        for (auto landmarkVertex : idx_landmark_vertices_) {
+        for (auto landmarkVertex: idx_landmark_vertices_) {
             landmarkVertex.second->SetOrderingId(
-                landmarkVertex.second->OrderingId() + all_pose_dimension
+                    landmarkVertex.second->OrderingId() + all_pose_dimension
             );
         }
     }
@@ -317,7 +318,7 @@ void Problem::MakeHessian() {
                 // H.block(?,?, ?, ?).noalias() += hessian;
                 if (j != i) {
                     // 对称的下三角
-		    // TODO:: home work. 完成 H index 的填写.
+                    // TODO:: home work. 完成 H index 的填写.
                     // H.block(?,?, ?, ?).noalias() += hessian.transpose();
                 }
             }
@@ -375,7 +376,7 @@ void Problem::SolveLinearSystem() {
 
         // Hmm 是对角线矩阵，它的求逆可以直接为对角线块分别求逆，如果是逆深度，对角线块为1维的，则直接为对角线的倒数，这里可以加速
         MatXX Hmm_inv(MatXX::Zero(marg_size, marg_size));
-        for (auto landmarkVertex : idx_landmark_vertices_) {
+        for (auto landmarkVertex: idx_landmark_vertices_) {
             int idx = landmarkVertex.second->OrderingId() - reserve_size;
             int size = landmarkVertex.second->LocalDimension();
             Hmm_inv.block(idx, idx, size, size) = Hmm.block(idx, idx, size, size).inverse();
@@ -566,10 +567,10 @@ void Problem::TestMarginalize() {
 
     int cols = 3;
     MatXX H_marg(MatXX::Zero(cols, cols));
-    H_marg << 1./delta1, -1./delta1, 0,
-            -1./delta1, 1./delta1 + 1./delta2 + 1./delta3, -1./delta3,
-            0.,  -1./delta3, 1/delta3;
-    std::cout << "---------- TEST Marg: before marg------------"<< std::endl;
+    H_marg << 1. / delta1, -1. / delta1, 0,
+            -1. / delta1, 1. / delta1 + 1. / delta2 + 1. / delta3, -1. / delta3,
+            0., -1. / delta3, 1 / delta3;
+    std::cout << "---------- TEST Marg: before marg------------" << std::endl;
     std::cout << H_marg << std::endl;
 
     // TODO:: home work. 将变量移动到右下角
@@ -586,8 +587,8 @@ void Problem::TestMarginalize() {
     H_marg.block(0, idx, reserve_size, reserve_size - idx - dim) = temp_rightCols;
     H_marg.block(0, reserve_size - dim, reserve_size, dim) = temp_cols;
 
-    std::cout << "---------- TEST Marg: 将变量移动到右下角------------"<< std::endl;
-    std::cout<< H_marg <<std::endl;
+    std::cout << "---------- TEST Marg: 将变量移动到右下角------------" << std::endl;
+    std::cout << H_marg << std::endl;
 
     /// 开始 marg ： schur
     double eps = 1e-8;
@@ -608,7 +609,7 @@ void Problem::TestMarginalize() {
     Eigen::MatrixXd tempB = Arm * Amm_inv;
     Eigen::MatrixXd H_prior = Arr - tempB * Amr;
 
-    std::cout << "---------- TEST Marg: after marg------------"<< std::endl;
+    std::cout << "---------- TEST Marg: after marg------------" << std::endl;
     std::cout << H_prior << std::endl;
 }
 

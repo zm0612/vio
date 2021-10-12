@@ -34,7 +34,7 @@ void GetSimDataInWordFrame(vector<Frame> &cameraPoses, vector<Eigen::Vector3d> &
         Eigen::Matrix3d R;
         R = Eigen::AngleAxisd(theta, Eigen::Vector3d::UnitZ());
         Eigen::Vector3d t = Eigen::Vector3d(radius * cos(theta) - radius, radius * sin(theta), 1 * sin(2 * theta));
-        cameraPoses.push_back(Frame(R, t));
+        cameraPoses.emplace_back(R, t);
     }
 
     // 随机数生成三维特征点
@@ -127,13 +127,14 @@ int main() {
     problem.Solve(5);
 
     std::cout << "\nCompare MonoBA results after opt..." << std::endl;
-    for (size_t k = 0; k < allPoints.size(); k+=1) {
+    for (size_t k = 0; k < allPoints.size(); k += 1) {
         std::cout << "after opt, point " << k << " : gt " << 1. / points[k].z() << " ,noise "
                   << noise_invd[k] << " ,opt " << allPoints[k]->Parameters() << std::endl;
     }
-    std::cout<<"------------ pose translation ----------------"<<std::endl;
+    std::cout << "------------ pose translation ----------------" << std::endl;
     for (int i = 0; i < vertexCams_vec.size(); ++i) {
-        std::cout<<"translation after opt: "<< i <<" :"<< vertexCams_vec[i]->Parameters().head(3).transpose() << " || gt: "<<cameras[i].twc.transpose()<<std::endl;
+        std::cout << "translation after opt: " << i << " :" << vertexCams_vec[i]->Parameters().head(3).transpose()
+                  << " || gt: " << cameras[i].twc.transpose() << std::endl;
     }
     /// 优化完成后，第一帧相机的 pose 平移（x,y,z）不再是原点 0,0,0. 说明向零空间发生了漂移。
     /// 解决办法： fix 第一帧和第二帧，固定 7 自由度。 或者加上非常大的先验值。
