@@ -45,7 +45,7 @@ private:
     Vec3 tic;
 
     //measurements
-    Vec3 pts_i_, pts_j_;
+    Vec3 pts_i_, pts_j_;//归一化平面的测量值
 };
 
 /**

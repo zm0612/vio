@@ -47,10 +47,12 @@ void EdgeReprojection::SetTranslationImuFromCamera(Eigen::Quaterniond &qic_, Vec
 void EdgeReprojection::ComputeJacobians() {
     double inv_dep_i = verticies_[0]->Parameters()[0];
 
+    //第i个相机的pose
     VecX param_i = verticies_[1]->Parameters();
     Qd Qi(param_i[6], param_i[3], param_i[4], param_i[5]);
     Vec3 Pi = param_i.head<3>();
 
+    //第j个相机的pose
     VecX param_j = verticies_[2]->Parameters();
     Qd Qj(param_j[6], param_j[3], param_j[4], param_j[5]);
     Vec3 Pj = param_j.head<3>();
@@ -84,8 +86,8 @@ void EdgeReprojection::ComputeJacobians() {
     jacobian_pose_j.leftCols<6>() = reduce * jaco_j;
 
     Eigen::Vector2d jacobian_feature;
-    jacobian_feature =
-            reduce * ric.transpose() * Rj.transpose() * Ri * ric * pts_i_ * -1.0 / (inv_dep_i * inv_dep_i);
+    jacobian_feature = reduce * ric.transpose() * Rj.transpose() *
+                       Ri * ric * pts_i_ * -1.0 / (inv_dep_i * inv_dep_i);
 
     jacobians_[0] = jacobian_feature;
     jacobians_[1] = jacobian_pose_i;

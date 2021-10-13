@@ -77,8 +77,8 @@ int main() {
         pose << cameras[i].twc, cameras[i].qwc.x(), cameras[i].qwc.y(), cameras[i].qwc.z(), cameras[i].qwc.w();
         vertexCam->SetParameters(pose);
 
-//        if(i < 2)
-//            vertexCam->SetFixed();
+        if (i < 2)
+            vertexCam->SetFixed();
 
         problem.AddVertex(vertexCam);
         vertexCams_vec.push_back(vertexCam);
@@ -87,7 +87,7 @@ int main() {
     // 所有 Point 及 edge
     std::default_random_engine generator;
     std::normal_distribution<double> noise_pdf(0, 1.);
-    double noise = 0;
+    double noise = 0.0;
     vector<double> noise_invd;
     vector<shared_ptr<VertexInverseDepth> > allPoints;
     for (size_t i = 0; i < points.size(); ++i) {
@@ -139,7 +139,7 @@ int main() {
     /// 优化完成后，第一帧相机的 pose 平移（x,y,z）不再是原点 0,0,0. 说明向零空间发生了漂移。
     /// 解决办法： fix 第一帧和第二帧，固定 7 自由度。 或者加上非常大的先验值。
 
-    problem.TestMarginalize();
+//    problem.TestMarginalize();
 
     return 0;
 }

@@ -8,7 +8,7 @@
 ### 编译说明：
 
 ```c++
-cd BA_schur  \\ 进入文件夹
+cd BA_schur  # 进入文件夹
 mkdir build   
 cd build
 cmake ..
