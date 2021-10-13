@@ -132,14 +132,14 @@ int main() {
                   << noise_invd[k] << " ,opt " << allPoints[k]->Parameters() << std::endl;
     }
     std::cout << "------------ pose translation ----------------" << std::endl;
-    for (int i = 0; i < vertexCams_vec.size(); ++i) {
+    for (unsigned int i = 0; i < vertexCams_vec.size(); ++i) {
         std::cout << "translation after opt: " << i << " :" << vertexCams_vec[i]->Parameters().head(3).transpose()
                   << " || gt: " << cameras[i].twc.transpose() << std::endl;
     }
     /// 优化完成后，第一帧相机的 pose 平移（x,y,z）不再是原点 0,0,0. 说明向零空间发生了漂移。
     /// 解决办法： fix 第一帧和第二帧，固定 7 自由度。 或者加上非常大的先验值。
 
-//    problem.TestMarginalize();
+    problem.TestMarginalize();
 
     return 0;
 }
