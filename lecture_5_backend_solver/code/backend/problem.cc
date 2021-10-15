@@ -330,6 +330,8 @@ void Problem::MakeHessian() {
     t_hessian_cost_ += t_h.toc();
 
 //    Eigen::JacobiSVD<Eigen::MatrixXd> svd(H, Eigen::ComputeThinU | Eigen::ComputeThinV);
+//    std::cout << "rank of Hessian: " << svd.rank() << " matrix rows: "
+//              << H.rows() << " matrix cols: " << H.cols() << std::endl;
 //    std::cout << svd.singularValues() <<std::endl;
 
     if (err_prior_.rows() > 0) {
@@ -339,24 +341,32 @@ void Problem::MakeHessian() {
     b_.head(ordering_poses_) += b_prior_;
 
     delta_x_ = VecX::Zero(size);  // initial delta_x = 0_n;
-
 }
 
 /*
  * Solve Hx = b, we can use PCG iterative method or use sparse Cholesky
  */
 void Problem::SolveLinearSystem() {
-
+//#define USE_PRIOR
     if (problemType_ == ProblemType::GENERIC_PROBLEM) {
 
         // 非 SLAM 问题直接求解
         // PCG solver
         MatXX H = Hessian_;
+#ifdef USE_PRIOR
+#else
         for (ulong i = 0; i < Hessian_.cols(); ++i) {
             H(i, i) += currentLambda_;
         }
+#endif
 //        delta_x_ = PCGSolver(H, b_, H.rows() * 2);
+#ifdef USE_PRIOR
+        Eigen::Matrix<double, 6, 6> I;
+        I.setIdentity();
+        Hessian_.block(0, 0, 6, 6).noalias() += pow(100, 2) * I;
+        Hessian_.block(6, 6, 6, 6).noalias() += pow(100, 2) * I;
         delta_x_ = Hessian_.inverse() * b_;
+#endif
     } else {
         // SLAM 问题采用舒尔补的计算方式
         // step1: schur marginalization --> Hpp, bpp
@@ -550,7 +560,6 @@ bool Problem::Marginalize(const std::shared_ptr<Vertex> frameVertex) {
 
 
 void Problem::TestMarginalize() {
-
     // Add marg test
     int idx = 1;            // marg 中间那个变量
     int dim = 1;            // marg 变量的维度
@@ -611,9 +620,3 @@ void Problem::TestMarginalize() {
 
 }
 }
-
-
-
-
-
-
