@@ -4,7 +4,7 @@
 
 ## 1. 基础题
 
-<img src="/home/meng/code_my/vio/lecture_6_frontend/doc/question_1.png" alt="question_1" style="zoom:50%;" />
+<img src="doc/question_1.png" alt="question_1" style="zoom:50%;" />
 
 ①. 对于第一题的证明，实际上有多种方法，可以使用拉格朗日乘子，也可以使用SVD分解。我在博客中给出了非常完整的理论证明，可以参考博客：[《超定方程组的求解》](https://blog.csdn.net/u011341856/article/details/107758182?spm=1001.2014.3001.5501)
 
