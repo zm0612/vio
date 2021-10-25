@@ -19,8 +19,7 @@
 
 
 //imu for vio
-struct IMU_MSG
-{
+struct IMU_MSG {
     double header;
     Eigen::Vector3d linear_acceleration;
     Eigen::Vector3d angular_velocity;
@@ -37,10 +36,9 @@ struct IMG_MSG {
     vector<float> velocity_x_of_point;
     vector<float> velocity_y_of_point;
 };
-typedef std::shared_ptr <IMG_MSG const > ImgConstPtr;
-    
-class System
-{
+typedef std::shared_ptr<IMG_MSG const> ImgConstPtr;
+
+class System {
 public:
     System(std::string sConfig_files);
 
@@ -48,13 +46,14 @@ public:
 
     void PubImageData(double dStampSec, cv::Mat &img);
 
-    void PubImuData(double dStampSec, const Eigen::Vector3d &vGyr, 
-        const Eigen::Vector3d &vAcc);
+    void PubImuData(double dStampSec, const Eigen::Vector3d &vGyr,
+                    const Eigen::Vector3d &vAcc);
 
     // thread: visual-inertial odometry
     void ProcessBackEnd();
+
     void Draw();
-    
+
     pangolin::OpenGlRenderState s_cam;
     pangolin::View d_cam;
 
@@ -103,12 +102,13 @@ private:
     Eigen::Vector3d tmp_Bg;
     Eigen::Vector3d acc_0;
     Eigen::Vector3d gyr_0;
-    bool init_feature = 0;
-    bool init_imu = 1;
+    bool init_feature = false;
+    bool init_imu = true;
     double last_imu_t = 0;
     std::ofstream ofs_pose;
     std::vector<Eigen::Vector3d> vPath_to_draw;
     bool bStart_backend;
+
     std::vector<std::pair<std::vector<ImuConstPtr>, ImgConstPtr>> getMeasurements();
-    
+
 };
