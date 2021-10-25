@@ -31,7 +31,6 @@ double ROW, COL;
 double TD, TR;
 
 
-
 int FOCAL_LENGTH;
 string IMAGE_TOPIC;
 string IMU_TOPIC;
@@ -49,8 +48,11 @@ int FISHEYE;
 bool PUB_THIS_FRAME;
 
 
-void readParameters(string config_file)
-{
+/*!
+ * read some parameters about camera、imu...
+ * @param config_file
+ */
+void readParameters(const string &config_file) {
     // string config_file;
     // config_file = readParam<string>(n, "config_file");
     // cv::FileStorage fsSettings(config_file, cv::FileStorage::READ);
@@ -59,8 +61,7 @@ void readParameters(string config_file)
     //     cerr << "ERROR: Wrong path to settings" << endl;
     // }
     cv::FileStorage fsSettings(config_file, cv::FileStorage::READ);
-    if (!fsSettings.isOpened())
-    {
+    if (!fsSettings.isOpened()) {
         cerr << "1 readParameters ERROR: Wrong path to settings!" << endl;
         return;
     }
@@ -90,21 +91,17 @@ void readParameters(string config_file)
     // ROS_INFO("ROW: %f COL: %f ", ROW, COL);
 
     ESTIMATE_EXTRINSIC = fsSettings["estimate_extrinsic"];
-    if (ESTIMATE_EXTRINSIC == 2)
-    {
+    if (ESTIMATE_EXTRINSIC == 2) {
         // ROS_WARN("have no prior about extrinsic param, calibrate extrinsic param");
-        RIC.push_back(Eigen::Matrix3d::Identity());
-        TIC.push_back(Eigen::Vector3d::Zero());
+        RIC.emplace_back(Eigen::Matrix3d::Identity());
+        TIC.emplace_back(Eigen::Vector3d::Zero());
         EX_CALIB_RESULT_PATH = OUTPUT_PATH + "/extrinsic_parameter.csv";
-    }
-    else
-    {
-        if (ESTIMATE_EXTRINSIC == 1)
-        {
+    } else {
+        if (ESTIMATE_EXTRINSIC == 1) {
             // ROS_WARN(" Optimize extrinsic param around initial guess!");
             EX_CALIB_RESULT_PATH = OUTPUT_PATH + "/extrinsic_parameter.csv";
         }
-        if (ESTIMATE_EXTRINSIC == 0){
+        if (ESTIMATE_EXTRINSIC == 0) {
             cout << " fix extrinsic param " << endl;
         }
         cv::Mat cv_R, cv_T;
@@ -131,18 +128,15 @@ void readParameters(string config_file)
     TD = fsSettings["td"];
     ESTIMATE_TD = fsSettings["estimate_td"];
     // if (ESTIMATE_TD)
-        // ROS_INFO_STREAM("Unsynchronized sensors, online estimate time offset, initial td: " << TD);
+    // ROS_INFO_STREAM("Unsynchronized sensors, online estimate time offset, initial td: " << TD);
     // else
     //     ROS_INFO_STREAM("Synchronized sensors, fix time offset: " << TD);
 
     ROLLING_SHUTTER = fsSettings["rolling_shutter"];
-    if (ROLLING_SHUTTER)
-    {
+    if (ROLLING_SHUTTER) {
         TR = fsSettings["rolling_shutter_tr"];
         // ROS_INFO_STREAM("rolling shutter camera, read out time per line: " << TR);
-    }
-    else
-    {
+    } else {
         TR = 0;
     }
 
@@ -167,46 +161,46 @@ void readParameters(string config_file)
     STEREO_TRACK = false;
     PUB_THIS_FRAME = false;
 
-    if (FREQ == 0){
+    if (FREQ == 0) {
         FREQ = 10;
     }
     fsSettings.release();
 
     cout << "1 readParameters:  "
-        <<  "\n  INIT_DEPTH: " << INIT_DEPTH
-        <<  "\n  MIN_PARALLAX: " << MIN_PARALLAX
-        <<  "\n  ACC_N: " <<ACC_N
-        <<  "\n  ACC_W: " <<ACC_W
-        <<  "\n  GYR_N: " <<GYR_N
-        <<  "\n  GYR_W: " <<GYR_W
-        <<  "\n  RIC:   " << RIC[0]
-        <<  "\n  TIC:   " <<TIC[0].transpose()
-        <<  "\n  G:     " <<G.transpose()
-        <<  "\n  BIAS_ACC_THRESHOLD:"<<BIAS_ACC_THRESHOLD
-        <<  "\n  BIAS_GYR_THRESHOLD:"<<BIAS_GYR_THRESHOLD
-        <<  "\n  SOLVER_TIME:"<<SOLVER_TIME
-        <<  "\n  NUM_ITERATIONS:"<<NUM_ITERATIONS
-        <<  "\n  ESTIMATE_EXTRINSIC:"<<ESTIMATE_EXTRINSIC
-        <<  "\n  ESTIMATE_TD:"<<ESTIMATE_TD
-        <<  "\n  ROLLING_SHUTTER:"<<ROLLING_SHUTTER
-        <<  "\n  ROW:"<<ROW
-        <<  "\n  COL:"<<COL
-        <<  "\n  TD:"<<TD
-        <<  "\n  TR:"<<TR
-        <<  "\n  FOCAL_LENGTH:"<<FOCAL_LENGTH
-        <<  "\n  IMAGE_TOPIC:"<<IMAGE_TOPIC
-        <<  "\n  IMU_TOPIC:"<<IMU_TOPIC
-        <<  "\n  FISHEYE_MASK:"<<FISHEYE_MASK
-        <<  "\n  CAM_NAMES[0]:"<<CAM_NAMES[0]
-        <<  "\n  MAX_CNT:"<<MAX_CNT
-        <<  "\n  MIN_DIST:"<<MIN_DIST
-        <<  "\n  FREQ:"<<FREQ
-        <<  "\n  F_THRESHOLD:"<<F_THRESHOLD
-        <<  "\n  SHOW_TRACK:"<<SHOW_TRACK
-        <<  "\n  STEREO_TRACK:"<<STEREO_TRACK
-        <<  "\n  EQUALIZE:"<<EQUALIZE
-        <<  "\n  FISHEYE:"<<FISHEYE
-        <<  "\n  PUB_THIS_FRAME:"<<PUB_THIS_FRAME
-    << endl;
+         << "\n  INIT_DEPTH: " << INIT_DEPTH
+         << "\n  MIN_PARALLAX: " << MIN_PARALLAX
+         << "\n  ACC_N: " << ACC_N
+         << "\n  ACC_W: " << ACC_W
+         << "\n  GYR_N: " << GYR_N
+         << "\n  GYR_W: " << GYR_W
+         << "\n  RIC:   " << RIC[0]
+         << "\n  TIC:   " << TIC[0].transpose()
+         << "\n  G:     " << G.transpose()
+         << "\n  BIAS_ACC_THRESHOLD:" << BIAS_ACC_THRESHOLD
+         << "\n  BIAS_GYR_THRESHOLD:" << BIAS_GYR_THRESHOLD
+         << "\n  SOLVER_TIME:" << SOLVER_TIME
+         << "\n  NUM_ITERATIONS:" << NUM_ITERATIONS
+         << "\n  ESTIMATE_EXTRINSIC:" << ESTIMATE_EXTRINSIC
+         << "\n  ESTIMATE_TD:" << ESTIMATE_TD
+         << "\n  ROLLING_SHUTTER:" << ROLLING_SHUTTER
+         << "\n  ROW:" << ROW
+         << "\n  COL:" << COL
+         << "\n  TD:" << TD
+         << "\n  TR:" << TR
+         << "\n  FOCAL_LENGTH:" << FOCAL_LENGTH
+         << "\n  IMAGE_TOPIC:" << IMAGE_TOPIC
+         << "\n  IMU_TOPIC:" << IMU_TOPIC
+         << "\n  FISHEYE_MASK:" << FISHEYE_MASK
+         << "\n  CAM_NAMES[0]:" << CAM_NAMES[0]
+         << "\n  MAX_CNT:" << MAX_CNT
+         << "\n  MIN_DIST:" << MIN_DIST
+         << "\n  FREQ:" << FREQ
+         << "\n  F_THRESHOLD:" << F_THRESHOLD
+         << "\n  SHOW_TRACK:" << SHOW_TRACK
+         << "\n  STEREO_TRACK:" << STEREO_TRACK
+         << "\n  EQUALIZE:" << EQUALIZE
+         << "\n  FISHEYE:" << FISHEYE
+         << "\n  PUB_THIS_FRAME:" << PUB_THIS_FRAME
+         << endl;
 
 }

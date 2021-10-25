@@ -6,7 +6,7 @@ using namespace std;
 using namespace cv;
 using namespace pangolin;
 
-System::System(string sConfig_file_)
+System::System(const string &sConfig_file_)
         : bStart_backend(true) {
     string sConfig_file = sConfig_file_ + "euroc_config.yaml";
 
@@ -158,14 +158,14 @@ vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
             return measurements;
         }
 
-        if (!(imu_buf.back()->header > feature_buf.front()->header + estimator.td)) {
+        if (imu_buf.back()->header <= feature_buf.front()->header + estimator.td) {
             cerr << "wait for imu, only should happen at the beginning sum_of_wait: "
                  << sum_of_wait << endl;
             sum_of_wait++;
             return measurements;
         }
 
-        if (!(imu_buf.front()->header < feature_buf.front()->header + estimator.td)) {
+        if (imu_buf.front()->header >= feature_buf.front()->header + estimator.td) {
             cerr << "throw img, only should happen at the beginning" << endl;
             feature_buf.pop();
             continue;
@@ -224,7 +224,7 @@ void System::ProcessBackEnd() {
 
         unique_lock<mutex> lk(m_buf);
         con.wait(lk, [&] {
-            return (measurements = getMeasurements()).size() != 0;
+            return !(measurements = getMeasurements()).empty();
         });
         if (measurements.size() > 1) {
             cout << "1 getMeasurements size: " << measurements.size()

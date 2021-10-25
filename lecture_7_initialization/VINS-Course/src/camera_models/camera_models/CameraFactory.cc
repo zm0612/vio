@@ -21,9 +21,9 @@ CameraFactory::CameraFactory()
 }
 
 boost::shared_ptr<CameraFactory>
-CameraFactory::instance(void)
+CameraFactory::instance()
 {
-    if (m_instance.get() == 0)
+    if (m_instance.get() == nullptr)
     {
         m_instance.reset(new CameraFactory);
     }
@@ -93,7 +93,7 @@ CameraFactory::generateCameraFromYamlFile(const std::string& filename)
 
     if (!fs.isOpened())
     {
-        return CameraPtr();
+        return {};
     }
 
     Camera::ModelType modelType = Camera::MEI;
@@ -121,7 +121,7 @@ CameraFactory::generateCameraFromYamlFile(const std::string& filename)
         else
         {
             std::cerr << "# ERROR: Unknown camera model: " << sModelType << std::endl;
-            return CameraPtr();
+            return {};
         }
     }
 
@@ -166,7 +166,7 @@ CameraFactory::generateCameraFromYamlFile(const std::string& filename)
     }
     }
 
-    return CameraPtr();
+    return {};
 }
 
 }

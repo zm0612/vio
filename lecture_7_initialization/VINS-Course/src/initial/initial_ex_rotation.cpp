@@ -1,6 +1,6 @@
 #include "initial/initial_ex_rotation.h"
 
-InitialEXRotation::InitialEXRotation(){
+InitialEXRotation::InitialEXRotation() {
     frame_count = 0;
     Rc.push_back(Matrix3d::Identity());
     Rc_g.push_back(Matrix3d::Identity());
@@ -8,8 +8,8 @@ InitialEXRotation::InitialEXRotation(){
     ric = Matrix3d::Identity();
 }
 
-bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d>> corres, Quaterniond delta_q_imu, Matrix3d &calib_ric_result)
-{
+bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d>> corres, Quaterniond delta_q_imu,
+                                              Matrix3d &calib_ric_result) {
     frame_count++;
     Rc.push_back(solveRelativeR(corres));
     Rimu.push_back(delta_q_imu.toRotationMatrix());
@@ -18,8 +18,7 @@ bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d>> c
     Eigen::MatrixXd A(frame_count * 4, 4);
     A.setZero();
     int sum_ok = 0;
-    for (int i = 1; i <= frame_count; i++)
-    {
+    for (int i = 1; i <= frame_count; i++) {
         Quaterniond r1(Rc[i]);
         Quaterniond r2(Rc_g[i]);
 
@@ -56,31 +55,25 @@ bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d>> c
     //cout << ric << endl;
     Vector3d ric_cov;
     ric_cov = svd.singularValues().tail<3>();
-    if (frame_count >= WINDOW_SIZE && ric_cov(1) > 0.25)
-    {
+    if (frame_count >= WINDOW_SIZE && ric_cov(1) > 0.25) {
         calib_ric_result = ric;
         return true;
-    }
-    else
+    } else
         return false;
 }
 
-Matrix3d InitialEXRotation::solveRelativeR(const vector<pair<Vector3d, Vector3d>> &corres)
-{
-    if (corres.size() >= 9)
-    {
+Matrix3d InitialEXRotation::solveRelativeR(const vector<pair<Vector3d, Vector3d>> &corres) {
+    if (corres.size() >= 9) {
         vector<cv::Point2f> ll, rr;
-        for (int i = 0; i < int(corres.size()); i++)
-        {
-            ll.push_back(cv::Point2f(corres[i].first(0), corres[i].first(1)));
-            rr.push_back(cv::Point2f(corres[i].second(0), corres[i].second(1)));
+        for (const auto & corre : corres) {
+            ll.emplace_back(corre.first(0), corre.first(1));
+            rr.emplace_back(corre.second(0), corre.second(1));
         }
         cv::Mat E = cv::findFundamentalMat(ll, rr);
         cv::Mat_<double> R1, R2, t1, t2;
         decomposeE(E, R1, R2, t1, t2);
 
-        if (determinant(R1) + 1.0 < 1e-09)
-        {
+        if (determinant(R1) + 1.0 < 1e-09) {
             E = -E;
             decomposeE(E, R1, R2, t1, t2);
         }
@@ -98,9 +91,8 @@ Matrix3d InitialEXRotation::solveRelativeR(const vector<pair<Vector3d, Vector3d>
 }
 
 double InitialEXRotation::testTriangulation(const vector<cv::Point2f> &l,
-                                          const vector<cv::Point2f> &r,
-                                          cv::Mat_<double> R, cv::Mat_<double> t)
-{
+                                            const vector<cv::Point2f> &r,
+                                            cv::Mat_<double> R, cv::Mat_<double> t) {
     cv::Mat pointcloud;
     cv::Matx34f P = cv::Matx34f(1, 0, 0, 0,
                                 0, 1, 0, 0,
@@ -110,8 +102,7 @@ double InitialEXRotation::testTriangulation(const vector<cv::Point2f> &l,
                                  R(2, 0), R(2, 1), R(2, 2), t(2));
     cv::triangulatePoints(P, P1, l, r, pointcloud);
     int front_count = 0;
-    for (int i = 0; i < pointcloud.cols; i++)
-    {
+    for (int i = 0; i < pointcloud.cols; i++) {
         double normal_factor = pointcloud.col(i).at<float>(3);
 
         cv::Mat_<double> p_3d_l = cv::Mat(P) * (pointcloud.col(i) / normal_factor);
@@ -124,9 +115,8 @@ double InitialEXRotation::testTriangulation(const vector<cv::Point2f> &l,
 }
 
 void InitialEXRotation::decomposeE(cv::Mat E,
-                                 cv::Mat_<double> &R1, cv::Mat_<double> &R2,
-                                 cv::Mat_<double> &t1, cv::Mat_<double> &t2)
-{
+                                   cv::Mat_<double> &R1, cv::Mat_<double> &R2,
+                                   cv::Mat_<double> &t1, cv::Mat_<double> &t2) {
     cv::SVD svd(E, cv::SVD::MODIFY_A);
     cv::Matx33d W(0, -1, 0,
                   1, 0, 0,

@@ -40,7 +40,7 @@ typedef std::shared_ptr<IMG_MSG const> ImgConstPtr;
 
 class System {
 public:
-    System(std::string sConfig_files);
+    System(const std::string &sConfig_files);
 
     ~System();
 
