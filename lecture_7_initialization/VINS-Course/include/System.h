@@ -77,7 +77,7 @@ private:
     int pub_count = 1;
     bool first_image_flag = true;
     double last_image_time = 0;
-    bool init_pub = 0;
+    bool init_pub = false;
 
     //estimator
     Estimator estimator;

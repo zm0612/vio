@@ -47,7 +47,7 @@ System::~System() {
 void System::PubImageData(double dStampSec, Mat &img) {
     if (!init_feature) {
         cout << "1 PubImageData skip the first detected feature, which doesn't contain optical flow speed" << endl;
-        init_feature = 1;
+        init_feature = true;
         return;
     }
 
@@ -119,7 +119,7 @@ void System::PubImageData(double dStampSec, Mat &img) {
             // skip the first image; since no optical speed on frist image
             if (!init_pub) {
                 cout << "4 PubImage init_pub skip the first image!" << endl;
-                init_pub = 1;
+                init_pub = true;
             } else {
                 m_buf.lock();
                 feature_buf.push(feature_points);

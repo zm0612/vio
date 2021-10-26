@@ -40,7 +40,7 @@ void FeatureTracker::setMask() {
     vector<pair<int, pair<cv::Point2f, int>>> cnt_pts_id;
 
     for (unsigned int i = 0; i < forw_pts.size(); i++)
-        cnt_pts_id.push_back(make_pair(track_cnt[i], make_pair(forw_pts[i], ids[i])));
+        cnt_pts_id.emplace_back(track_cnt[i], make_pair(forw_pts[i], ids[i]));
 
     sort(cnt_pts_id.begin(), cnt_pts_id.end(),
          [](const pair<int, pair<cv::Point2f, int>> &a, const pair<int, pair<cv::Point2f, int>> &b) {
@@ -90,11 +90,12 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time) {
 
     forw_pts.clear();
 
-    if (cur_pts.size() > 0) {
+    if (!cur_pts.empty()) {
         TicToc t_o;
         vector<uchar> status;
         vector<float> err;
-        cv::calcOpticalFlowPyrLK(cur_img, forw_img, cur_pts, forw_pts, status, err, cv::Size(21, 21), 3);
+        cv::calcOpticalFlowPyrLK(cur_img, forw_img, cur_pts, forw_pts,
+                                 status, err, cv::Size(21, 21), 3);
 
         for (int i = 0; i < int(forw_pts.size()); i++)
             if (status[i] && !inBorder(forw_pts[i]))
