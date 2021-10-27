@@ -55,7 +55,7 @@ extern int NUM_ITERATIONS;
 extern std::string EX_CALIB_RESULT_PATH;
 extern std::string VINS_RESULT_PATH;
 extern std::string IMU_TOPIC;
-extern double TD;
+extern double TD;//imu和camera之间的时间戳差值，默认是0.0，认为它俩在同一时钟下，没有偏差
 extern double TR;
 extern int ESTIMATE_TD;
 extern int ROLLING_SHUTTER;

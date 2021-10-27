@@ -30,7 +30,6 @@ string VINS_RESULT_PATH;
 double ROW, COL;
 double TD, TR;
 
-
 int FOCAL_LENGTH;
 string IMAGE_TOPIC;
 string IMU_TOPIC;

@@ -67,7 +67,7 @@ public:
 
     enum SolverFlag {
         INITIAL,
-        NON_LINEAR
+        NON_LINEAR // 执行常规的优化
     };
 
     enum MarginalizationFlag {
@@ -109,7 +109,7 @@ public:
     vector<Vector3d> linear_acceleration_buf[(WINDOW_SIZE + 1)];
     vector<Vector3d> angular_velocity_buf[(WINDOW_SIZE + 1)];
 
-    int frame_count;
+    int frame_count;//滑动窗口内的frame个数
     int sum_of_outlier, sum_of_back, sum_of_front, sum_of_invalid;
 
     FeatureManager f_manager;

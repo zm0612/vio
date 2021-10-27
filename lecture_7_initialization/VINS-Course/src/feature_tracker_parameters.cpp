@@ -18,29 +18,23 @@ int FOCAL_LENGTH;
 int FISHEYE;
 bool PUB_THIS_FRAME;
 
-template <typename T>
-T readParam(ros::NodeHandle &n, std::string name)
-{
+template<typename T>
+T readParam(ros::NodeHandle &n, std::string name) {
     T ans;
-    if (n.getParam(name, ans))
-    {
+    if (n.getParam(name, ans)) {
         // ROS_INFO_STREAM("Loaded " << name << ": " << ans);
-    }
-    else
-    {
+    } else {
         // ROS_ERROR_STREAM("Failed to load " << name);
         n.shutdown();
     }
     return ans;
 }
 
-void readParameters(ros::NodeHandle &n)
-{
+void readParameters(ros::NodeHandle &n) {
     std::string config_file;
     config_file = readParam<std::string>(n, "config_file");
     cv::FileStorage fsSettings(config_file, cv::FileStorage::READ);
-    if(!fsSettings.isOpened())
-    {
+    if (!fsSettings.isOpened()) {
         std::cerr << "ERROR: Wrong path to settings" << std::endl;
     }
     std::string VINS_FOLDER_PATH = readParam<std::string>(n, "vins_folder");

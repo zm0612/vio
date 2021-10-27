@@ -5,6 +5,8 @@
 
 #include <ceres/ceres.h>
 
+#include <utility>
+
 using namespace Eigen;
 
 class IntegrationBase {
@@ -12,9 +14,9 @@ public:
     IntegrationBase() = delete;
 
     IntegrationBase(const Eigen::Vector3d &_acc_0, const Eigen::Vector3d &_gyr_0,
-                    const Eigen::Vector3d &_linearized_ba, const Eigen::Vector3d &_linearized_bg)
+                    Eigen::Vector3d _linearized_ba, const Eigen::Vector3d &_linearized_bg)
             : acc_0{_acc_0}, gyr_0{_gyr_0}, linearized_acc{_acc_0}, linearized_gyr{_gyr_0},
-              linearized_ba{_linearized_ba}, linearized_bg{_linearized_bg},
+              linearized_ba{std::move(_linearized_ba)}, linearized_bg{_linearized_bg},
               jacobian{Eigen::Matrix<double, 15, 15>::Identity()}, covariance{Eigen::Matrix<double, 15, 15>::Zero()},
               sum_dt{0.0}, delta_p{Eigen::Vector3d::Zero()}, delta_q{Eigen::Quaterniond::Identity()},
               delta_v{Eigen::Vector3d::Zero()} {
@@ -188,7 +190,7 @@ public:
         return residuals;
     }
 
-    double dt;
+    double dt{};
     Eigen::Vector3d acc_0, gyr_0;
     Eigen::Vector3d acc_1, gyr_1;
 

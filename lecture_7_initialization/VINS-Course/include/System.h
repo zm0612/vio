@@ -29,9 +29,9 @@ typedef std::shared_ptr<IMU_MSG const> ImuConstPtr;
 //image for vio    
 struct IMG_MSG {
     double header;
-    vector<Vector3d> points;
+    vector<Vector3d> points;//归一化平面的特征点坐标
     vector<int> id_of_point;
-    vector<float> u_of_point;
+    vector<float> u_of_point;//特征点的像素平面坐标
     vector<float> v_of_point;
     vector<float> velocity_x_of_point;
     vector<float> velocity_y_of_point;

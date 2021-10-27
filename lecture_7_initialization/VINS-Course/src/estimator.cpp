@@ -102,6 +102,7 @@ void Estimator::processIMU(double dt, const Vector3d &linear_acceleration, const
     if (!pre_integrations[frame_count]) {
         pre_integrations[frame_count] = new IntegrationBase{acc_0, gyr_0, Bas[frame_count], Bgs[frame_count]};
     }
+
     if (frame_count != 0) {
         pre_integrations[frame_count]->push_back(dt, linear_acceleration, angular_velocity);
         //if(solver_flag != NON_LINEAR)

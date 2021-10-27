@@ -149,6 +149,12 @@ void System::PubImageData(double dStampSec, Mat &img) {
 
 }
 
+/*!
+ * 从imu_buf和feature_buf中提取出数据
+ * 需要保证一段imu数据中必须夹一个image
+ * 最终将得到的数据为，一段imu数据，一个图像帧数据，其中将会有一个imu数据是在图像之后的
+ * @return
+ */
 vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
     vector<pair<vector<ImuConstPtr>, ImgConstPtr>> measurements;
 
@@ -158,6 +164,7 @@ vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
             return measurements;
         }
 
+        // imu最新的数据比图像最老的数据的时间还要早
         if (imu_buf.back()->header <= feature_buf.front()->header + estimator.td) {
             cerr << "wait for imu, only should happen at the beginning sum_of_wait: "
                  << sum_of_wait << endl;
@@ -165,11 +172,13 @@ vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
             return measurements;
         }
 
+        // 保证imu最老的数据要比image最老的数据时间更早
         if (imu_buf.front()->header >= feature_buf.front()->header + estimator.td) {
             cerr << "throw img, only should happen at the beginning" << endl;
             feature_buf.pop();
             continue;
         }
+
         ImgConstPtr img_msg = feature_buf.front();
         feature_buf.pop();
 
