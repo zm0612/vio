@@ -51,6 +51,27 @@ public:
             propagate(dt_buf[i], acc_buf[i], gyr_buf[i]);
     }
 
+    /*!
+     * 该函数是以中值点的方式进行预积分求解PVQ的，需要注意的是这里使用的是离散形式的预积分公式
+     * 参数中_0代表上次测量值，_1代表当前测量值，delta_p，delta_q，delta_v代表相对预积分初始参考系的位移，旋转四元数，以及速度
+     * 从k帧预积分到k+1帧，则参考系是k帧的imu坐标系
+     * @param _dt
+     * @param _acc_0
+     * @param _gyr_0
+     * @param _acc_1
+     * @param _gyr_1
+     * @param delta_p
+     * @param delta_q
+     * @param delta_v
+     * @param linearized_ba
+     * @param linearized_bg
+     * @param result_delta_p
+     * @param result_delta_q
+     * @param result_delta_v
+     * @param result_linearized_ba
+     * @param result_linearized_bg
+     * @param update_jacobian
+     */
     void midPointIntegration(double _dt,
                              const Eigen::Vector3d &_acc_0, const Eigen::Vector3d &_gyr_0,
                              const Eigen::Vector3d &_acc_1, const Eigen::Vector3d &_gyr_1,
@@ -127,7 +148,6 @@ public:
             jacobian = F * jacobian;
             covariance = F * covariance * F.transpose() + V * noise * V.transpose();
         }
-
     }
 
     void propagate(double _dt, const Eigen::Vector3d &_acc_1, const Eigen::Vector3d &_gyr_1) {
@@ -143,7 +163,7 @@ public:
         midPointIntegration(_dt, acc_0, gyr_0, _acc_1, _gyr_1, delta_p, delta_q, delta_v,
                             linearized_ba, linearized_bg,
                             result_delta_p, result_delta_q, result_delta_v,
-                            result_linearized_ba, result_linearized_bg, 1);
+                            result_linearized_ba, result_linearized_bg, true);
 
         //checkJacobian(_dt, acc_0, gyr_0, acc_1, gyr_1, delta_p, delta_q, delta_v,
         //                    linearized_ba, linearized_bg);

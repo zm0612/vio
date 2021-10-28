@@ -51,7 +51,7 @@ bool FeatureManager::addFeatureCheckParallax(int frame_count,
         });
 
         if (it == feature.end()) {
-            feature.push_back(FeaturePerId(feature_id, frame_count));
+            feature.emplace_back(feature_id, frame_count);
             feature.back().feature_per_frame.push_back(f_per_fra);
         } else if (it->feature_id == feature_id) {
             it->feature_per_frame.push_back(f_per_fra);

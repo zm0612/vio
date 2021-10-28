@@ -18,7 +18,7 @@ public:
     InitialEXRotation();
 
     bool
-    CalibrationExRotation(vector<pair<Vector3d, Vector3d>> corres, Quaterniond delta_q_imu, Matrix3d &calib_ric_result);
+    CalibrationExRotation(const vector<pair<Vector3d, Vector3d>>& corres, const Quaterniond& delta_q_imu, Matrix3d &calib_ric_result);
 
 private:
     Matrix3d solveRelativeR(const vector<pair<Vector3d, Vector3d>> &corres);

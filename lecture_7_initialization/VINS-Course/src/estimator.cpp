@@ -837,8 +837,8 @@ void Estimator::problemSolve() {
     shared_ptr<backend::VertexPose> vertexExt(new backend::VertexPose());
     {
         Eigen::VectorXd pose(7);
-        pose
-                << para_Ex_Pose[0][0], para_Ex_Pose[0][1], para_Ex_Pose[0][2], para_Ex_Pose[0][3], para_Ex_Pose[0][4], para_Ex_Pose[0][5], para_Ex_Pose[0][6];
+        pose << para_Ex_Pose[0][0], para_Ex_Pose[0][1], para_Ex_Pose[0][2], para_Ex_Pose[0][3],
+                para_Ex_Pose[0][4], para_Ex_Pose[0][5], para_Ex_Pose[0][6];
         vertexExt->SetParameters(pose);
 
         if (!ESTIMATE_EXTRINSIC) {

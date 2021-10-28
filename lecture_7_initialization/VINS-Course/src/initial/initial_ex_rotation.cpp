@@ -2,18 +2,19 @@
 
 InitialEXRotation::InitialEXRotation() {
     frame_count = 0;
-    Rc.push_back(Matrix3d::Identity());
-    Rc_g.push_back(Matrix3d::Identity());
-    Rimu.push_back(Matrix3d::Identity());
+    Rc.emplace_back(Matrix3d::Identity());
+    Rc_g.emplace_back(Matrix3d::Identity());
+    Rimu.emplace_back(Matrix3d::Identity());
     ric = Matrix3d::Identity();
 }
 
-bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d>> corres, Quaterniond delta_q_imu,
+bool InitialEXRotation::CalibrationExRotation(const vector<pair<Vector3d, Vector3d>>& corres,
+                                              const Quaterniond& delta_q_imu,
                                               Matrix3d &calib_ric_result) {
     frame_count++;
     Rc.push_back(solveRelativeR(corres));
     Rimu.push_back(delta_q_imu.toRotationMatrix());
-    Rc_g.push_back(ric.inverse() * delta_q_imu * ric);
+    Rc_g.emplace_back(ric.inverse() * delta_q_imu * ric);
 
     Eigen::MatrixXd A(frame_count * 4, 4);
     A.setZero();
