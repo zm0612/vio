@@ -8,7 +8,7 @@ using namespace pangolin;
 
 System::System(const string &sConfig_file_)
         : bStart_backend(true) {
-    string sConfig_file = sConfig_file_ + "euroc_config.yaml";
+    string sConfig_file = sConfig_file_ + "/euroc_config.yaml";
 
     cout << "1 System() sConfig_file: " << sConfig_file << endl;
     readParameters(sConfig_file);
@@ -137,7 +137,9 @@ void System::PubImageData(double dStampSec, Mat &img) {
     if (SHOW_TRACK) {
         for (unsigned int j = 0; j < trackerData[0].cur_pts.size(); j++) {
             double len = min(1.0, 1.0 * trackerData[0].track_cnt[j] / WINDOW_SIZE);
-            cv::circle(show_img, trackerData[0].cur_pts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
+            // 点被观测到的数量越多越蓝，越少越红
+            cv::circle(show_img, trackerData[0].cur_pts[j], 2,
+                       cv::Scalar(255 * (1 - len), 0, 255 * len), 2); // BGR
         }
 
         cv::namedWindow("IMAGE", CV_WINDOW_AUTOSIZE);
@@ -316,7 +318,9 @@ void System::ProcessBackEnd() {
                 double dStamp = estimator.Headers[WINDOW_SIZE];
                 cout << "1 BackEnd processImage dt: " << fixed << t_processImage.toc() << " stamp: " << dStamp
                      << " p_wi: " << p_wi.transpose() << endl;
-                ofs_pose << fixed << dStamp << " " << p_wi.transpose() << " " << q_wi.coeffs().transpose() << endl;
+//                ofs_pose << fixed << dStamp << " " << p_wi.transpose() << " " << q_wi.coeffs().transpose() << endl;
+                ofs_pose << fixed << dStamp << " " << p_wi[0] << " " << p_wi[1] << " " << p_wi[2] << " "
+                         << q_wi.x() << " " << q_wi.y() << " " << q_wi.z() << " " << q_wi.z() << endl;
             }
         }
         m_estimator.unlock();

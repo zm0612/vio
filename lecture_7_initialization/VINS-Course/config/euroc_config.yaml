@@ -1,9 +1,9 @@
-  %YAML:1.0
+%YAML:1.0
 
   #common parameters
   imu_topic: "/imu0"
   image_topic: "/cam0/image_raw"
-  output_path: "/home/hyj/slam_course_vins"
+  output_path: "/home/meng/codes_my/vio/lecture_7_initialization/VINS-Course/build"
 
   #camera calibration
   model_type: PINHOLE

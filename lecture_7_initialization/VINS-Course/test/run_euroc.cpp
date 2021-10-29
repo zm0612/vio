@@ -17,13 +17,13 @@ using namespace cv;
 using namespace Eigen;
 
 const int nDelayTimes = 2;
-string sData_path = "/home/dataset/EuRoC/MH-05/mav0/";
-string sConfig_path = "../config/";
+string sData_path = "/media/meng/DATA/EuRoC/MH_05_difficult/mav0";
+string sConfig_path = "../config";
 
 std::shared_ptr<System> pSystem;
 
 void PubImuData() {
-    string sImu_data_file = sConfig_path + "MH_05_imu0.txt";
+    string sImu_data_file = sConfig_path + "/MH_05_imu0.txt";
     cout << "1 PubImuData start sImu_data_filea: " << sImu_data_file << endl;
     ifstream fsImu;
     fsImu.open(sImu_data_file.c_str());
@@ -48,7 +48,7 @@ void PubImuData() {
 }
 
 void PubImageData() {
-    string sImage_file = sConfig_path + "MH_05_cam0.txt";
+    string sImage_file = sConfig_path + "/MH_05_cam0.txt";
 
     cout << "1 PubImageData start sImage_file: " << sImage_file << endl;
 
@@ -68,7 +68,7 @@ void PubImageData() {
         std::istringstream ssImuData(sImage_line);
         ssImuData >> dStampNSec >> sImgFileName;
         // cout << "Image t : " << fixed << dStampNSec << " Name: " << sImgFileName << endl;
-        string imagePath = sData_path + "cam0/data/" + sImgFileName;
+        string imagePath = sData_path + "/cam0/data/" + sImgFileName;
 
         Mat img = imread(imagePath.c_str(), 0);
         if (img.empty()) {

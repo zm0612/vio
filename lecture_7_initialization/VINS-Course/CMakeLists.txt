@@ -24,8 +24,8 @@ include_directories(
         ${Boost_INCLUDE_DIRS}
 )
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 add_library(camera_model SHARED
         src/camera_models/chessboard/Chessboard.cc
@@ -66,6 +66,10 @@ ADD_LIBRARY(MyVio SHARED
         src/backend/edge_prior.cpp
         src/backend/loss_function.cc
         src/backend/imu_integration.cc
+
+        src/generate_sim_data/imu.cpp
+        src/generate_sim_data/param.cpp
+        src/generate_sim_data/utilities.cpp
         )
 
 target_link_libraries(MyVio
@@ -81,3 +85,6 @@ target_link_libraries(run_euroc
 
 add_executable(testCurveFitting test/CurveFitting.cpp)
 target_link_libraries(testCurveFitting MyVio)
+
+add_executable(run_sim_data test/run_sim_data.cpp)
+target_link_libraries(run_sim_data MyVio -lpthread)
