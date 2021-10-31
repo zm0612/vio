@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(vins_estimator)
 
-set(CMAKE_BUILD_TYPE "Release")
+#set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
 
@@ -16,6 +16,8 @@ find_package(Boost REQUIRED COMPONENTS filesystem program_options system)
 
 message(STATUS "OpenCV_VERSION: ${OpenCV_VERSION}")
 
+include(cmake_modules/global_defination.cmake)
+
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
         ${EIGEN3_INCLUDE_DIR}
@@ -24,8 +26,8 @@ include_directories(
         ${Boost_INCLUDE_DIRS}
 )
 
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 add_library(camera_model SHARED
         src/camera_models/chessboard/Chessboard.cc

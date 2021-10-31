@@ -43,7 +43,6 @@ public:
     // 外参数
     Eigen::Matrix3d R_bc;   // cam to body
     Eigen::Vector3d t_bc;     // cam to body
-
 };
 
 

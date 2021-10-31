@@ -13,7 +13,7 @@
 #include <fstream>
 
 // save 3d points to file
-void SavePoints(const std::string& filename, std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> > points);
+void SavePoints(const std::string& filename, const std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> >& points);
 
 // save 3d points and it's obs in image
 void SaveFeatures(std::string filename,
@@ -21,7 +21,7 @@ void SaveFeatures(std::string filename,
                   std::vector<Eigen::Vector2d, Eigen::aligned_allocator<Eigen::Vector2d> > features);
 
 // save line obs
-void SaveLines(std::string filename,
+void SaveLines(const std::string& filename,
                std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> > features);
 
 

@@ -203,6 +203,138 @@ vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
     return measurements;
 }
 
+void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &FeaturePoints)
+{
+    if (!init_feature)//
+    {
+        cout << "1 PubImageData skip the first detected feature, which doesn't contain optical flow speed" << endl;
+        init_feature = 1;
+        return;
+    }
+
+    if (first_image_flag)//
+    {
+        cout << "2 PubImageData first_image_flag" << endl;
+        first_image_flag = false;
+        first_image_time = dStampSec;
+        last_image_time = dStampSec;
+        return;
+    }
+    // detect unstable camera stream 发现时间戳不连续甚至倒退，提示重新输入
+    if (dStampSec - last_image_time > 1.0 || dStampSec < last_image_time)
+    {
+        cerr << "3 PubImageData image discontinue! reset the feature tracker!" << endl;
+        first_image_flag = true;
+        last_image_time = 0;
+        pub_count = 1;
+        return;
+    }
+    last_image_time = dStampSec;
+    // frequency control 控制频率设定小于某一阈值
+//    if (round(1.0 * pub_count / (dStampSec - first_image_time)) <= FREQ)
+//    {
+//        PUB_THIS_FRAME = true;
+//        // reset the frequency control TODO question:若当前连续图像序列的频率与 FREQ=10 误差在一定范围内重置？
+//        if (abs(1.0 * pub_count / (dStampSec - first_image_time) - FREQ) < 0.01 * FREQ)
+//        {
+//            first_image_time = dStampSec;
+//            pub_count = 0;
+//        }
+//    }
+//    else
+//    {
+//        PUB_THIS_FRAME = false;
+//    }
+    PUB_THIS_FRAME = true;
+
+    TicToc t_r;
+    // cout << "3 PubImageData t : " << dStampSec << endl;
+    // TODO Bookmark:获取图像特征点
+//    trackerData[0].readImage(img, dStampSec);
+//    trackerData[0].readPoints(FeaturePoints, dStampSec);
+
+//    for (unsigned int i = 0;; i++)
+//    {
+//        bool completed = false;
+//        completed |= trackerData[0].updateID(i);
+//
+//        if (!completed)
+//            break;
+//    }
+    if (PUB_THIS_FRAME)
+    {
+        pub_count++;//pub进VINS的相机的个数
+        shared_ptr<IMG_MSG> feature_points(new IMG_MSG());
+        //这里的 IMG_MSG 的数据结构如下
+        /* struct IMG_MSG {
+             double header;
+             vector<Vector3d> points;//相机下的3d点
+             vector<int> id_of_point;//点对应的id
+             vector<float> u_of_point;//像素u
+             vector<float> v_of_point;//像素v
+             vector<float> velocity_x_of_point;//u的速度
+             vector<float> velocity_y_of_point;//v的速度
+         };*/
+        feature_points->header = dStampSec;//
+        vector<set<int>> hash_ids(NUM_OF_CAM);
+        //这里其实默认是1
+        for (int i = 0; i < NUM_OF_CAM; i++)
+        {
+//            auto &un_pts = trackerData[i].cur_un_pts;// 去畸变的归一化图像坐标
+//            auto &cur_pts = trackerData[i].cur_pts;// 当前追踪到的特征点
+//            auto &ids = trackerData[i].ids;
+//            auto &pts_velocity = trackerData[i].pts_velocity;
+            //遍历相机的所有特征点
+            for (unsigned int j = 0; j < FeaturePoints.size(); j++)
+            {
+//                if (trackerData[i].track_cnt[j] > 1)
+//                {
+//                    int p_id = ids[j];
+                int p_id = j;
+                hash_ids[i].insert(p_id);
+                double x = FeaturePoints[j].x;
+                double y = FeaturePoints[j].y;
+                double z = 1;
+                feature_points->points.push_back(Vector3d(x, y, z));
+                feature_points->id_of_point.push_back(p_id * NUM_OF_CAM + i);
+//                    feature_points->u_of_point.push_back(cur_pts[j].x); // 像素坐标
+//                    feature_points->v_of_point.push_back(cur_pts[j].y);
+
+//                    feature_points->velocity_x_of_point.push_back(pts_velocity[j].x);
+//                    feature_points->velocity_y_of_point.push_back(pts_velocity[j].y);
+
+                cv::Point2f pixel_point;//特征点对应的像素坐标
+                pixel_point.x = 460 * x + 255;
+                pixel_point.y = 460 * y + 255;
+
+                feature_points->u_of_point.push_back(pixel_point.x); // 像素坐标
+                feature_points->v_of_point.push_back(pixel_point.y);
+//                这里默认速度为0不考虑
+                feature_points->velocity_x_of_point.push_back(0);
+                feature_points->velocity_y_of_point.push_back(0);
+//                }
+            }
+
+            // skip the first image; since no optical speed on frist image
+            if (!init_pub)
+            {
+                cout << "4 PubImage init_pub skip the first image!" << endl;
+                init_pub = 1;
+            }
+            else
+            {
+                m_buf.lock();
+                feature_buf.push(feature_points);
+                // cout << "5 PubImage t : " << fixed << feature_points->header
+                //     << " feature_buf size: " << feature_buf.size() << endl;
+                m_buf.unlock();
+                con.notify_one();
+            }
+        }
+    }
+}
+
+
 void System::PubImuData(double dStampSec, const Eigen::Vector3d &vGyr,
                         const Eigen::Vector3d &vAcc) {
     shared_ptr<IMU_MSG> imu_msg(new IMU_MSG());

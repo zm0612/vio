@@ -1,21 +1,19 @@
 //
 // Created by hyj on 18-1-19.
 //
-#include "utilities.h"
+#include "generate_sim_data/utilities.h"
 
 /*!
  * 将生成的空间点保存为文件
  * @param filename
  * @param points
  */
-void SavePoints(const std::string &filename, std::vector<Eigen::Vector4d,
-        Eigen::aligned_allocator<Eigen::Vector4d> > points) {
+void SavePoints(const std::string &filename, const std::vector<Eigen::Vector4d,
+        Eigen::aligned_allocator<Eigen::Vector4d> > &points) {
     std::ofstream save_points;
     save_points.open(filename.c_str());
 
-    for (unsigned int i = 0; i < points.size(); ++i) {
-        Eigen::Vector4d p = points[i];
-
+    for (auto p: points) {
         save_points << p(0) << " "
                     << p(1) << " "
                     << p(2) << " "
@@ -29,8 +27,7 @@ void SavePoints(const std::string &filename, std::vector<Eigen::Vector4d,
  * @param points
  * @param features
  */
-void SaveFeatures(std::string filename,
-                  std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> > points,
+void SaveFeatures(std::string filename, std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> > points,
                   std::vector<Eigen::Vector2d, Eigen::aligned_allocator<Eigen::Vector2d> > features) {
     std::ofstream save_points;
     save_points.open(filename.c_str());
@@ -48,7 +45,7 @@ void SaveFeatures(std::string filename,
     }
 }
 
-void SaveLines(std::string filename,
+void SaveLines(const std::string &filename,
                std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d> > features) {
     std::ofstream save_points;
     save_points.open(filename.c_str());

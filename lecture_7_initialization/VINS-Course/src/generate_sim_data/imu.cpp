@@ -4,8 +4,8 @@
 
 #include <random>
 #include <utility>
-#include "imu.h"
-#include "utilities.h"
+#include "generate_sim_data/imu.h"
+#include "generate_sim_data/utilities.h"
 
 /*!
  * 将Body frame -> Inertial frame的欧拉角转换成旋转矩阵
