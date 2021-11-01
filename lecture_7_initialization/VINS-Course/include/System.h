@@ -75,7 +75,7 @@ private:
     // ros::Publisher pub_restart;
 
     FeatureTracker trackerData[NUM_OF_CAM];
-    double first_image_time;
+    double first_image_time{};
     int pub_count = 1;
     bool first_image_flag = true;
     double last_image_time = 0;
@@ -96,7 +96,7 @@ private:
     std::mutex i_buf;
     std::mutex m_estimator;
 
-    double latest_time;
+    double latest_time{};
     Eigen::Vector3d tmp_P;
     Eigen::Quaterniond tmp_Q;
     Eigen::Vector3d tmp_V;

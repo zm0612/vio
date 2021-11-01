@@ -99,7 +99,7 @@ MotionData IMU::MotionModel(double t) {
     // param
     float ellipse_x = 15;
     float ellipse_y = 20;
-    float z = 1;// z轴做sin运动
+    float z = 5;// z轴做sin运动
     float K1 = 10;// z轴的正弦频率是x，y的k1倍
     float K = M_PI / 10;// 20 * K = 2pi 由于我们采取的是时间是20s, 系数K控制yaw正好旋转一圈，运动一周
 

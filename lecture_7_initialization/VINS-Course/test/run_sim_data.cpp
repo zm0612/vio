@@ -203,7 +203,7 @@ void GenerateData() {
 }
 
 void PubImuData() {
-    string sImu_data_file = WORK_SPACE_PATH + "/bin/imu_pose.txt";//带噪声的IMU数据的路径
+    string sImu_data_file = WORK_SPACE_PATH + "/bin/imu_pose_noise.txt";//带噪声的IMU数据的路径
     cout << "1 PubImuData start sImu_data_filea: " << sImu_data_file << endl;
     ifstream fsImu;//文件流对象
     fsImu.open(sImu_data_file.c_str());
@@ -314,7 +314,7 @@ int main(int argc, char **argv) {
 
     if (argc != 2) {
         cerr << "./run_sim_data PATH_TO_CONFIG/config \n"
-             << "For example: ./run_sim_data ../config/" << endl;
+             << "For example: ./run_sim_data {PROJECT_SOURCE}/config/sim_config.yaml" << endl;
         return -1;
     }
     sConfig_path = argv[1];

@@ -9,7 +9,8 @@ using namespace pangolin;
 System::System(const string &sConfig_file_)
         : bStart_backend(true) {
 //    string sConfig_file = sConfig_file_ + "/euroc_config.yaml";
-    string sConfig_file = sConfig_file_ + "/sim_config.yaml";
+//    string sConfig_file = sConfig_file_ + "/sim_config.yaml";
+    const string &sConfig_file = sConfig_file_;
 
     cout << "1 System() sConfig_file: " << sConfig_file << endl;
     readParameters(sConfig_file);
@@ -17,7 +18,7 @@ System::System(const string &sConfig_file_)
     trackerData[0].readIntrinsicParameter(sConfig_file);
 
     estimator.setParameter();
-    ofs_pose.open("./pose_output.txt", fstream::app | fstream::out);
+    ofs_pose.open("./pose_output.txt", ios::out | ios::trunc);
     if (!ofs_pose.is_open()) {
         cerr << "ofs_pose is not open" << endl;
     }
@@ -460,9 +461,10 @@ void System::Draw() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     s_cam = pangolin::OpenGlRenderState(
-            pangolin::ProjectionMatrix(1024, 768, 500, 500, 512, 384, 0.1, 1000),
-            pangolin::ModelViewLookAt(-5, 0, 15, 7, 0, 0, 1.0, 0.0, 0.0)
-    );
+            pangolin::ProjectionMatrix(1024, 768, 500, 500,
+                                       512, 384, 0.1, 1000),
+            pangolin::ModelViewLookAt(-5, 0, 15, 7, 0,
+                                      0, 1.0, 0.0, 0.0));
 
     d_cam = pangolin::CreateDisplay()
             .SetBounds(0.0, 1.0, pangolin::Attach::Pix(175), 1.0, -1024.0f / 768.0f)

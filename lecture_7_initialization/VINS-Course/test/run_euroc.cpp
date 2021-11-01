@@ -143,7 +143,8 @@ void DrawIMGandGLinMainThrd(){
 int main(int argc, char **argv) {
     if (argc != 3) {
         cerr << "./run_euroc PATH_TO_FOLDER/MH-05/mav0 PATH_TO_CONFIG/config \n"
-             << "For example: ./run_euroc /home/stevencui/dataset/EuRoC/MH-05/mav0/ ../config/" << endl;
+             << "For example: ./run_euroc /home/xxx/dataset/EuRoC/MH-05/mav0/ {PROJECT_SOURCE}/config/euroc_config.yaml"
+             << endl;
         return -1;
     }
     sData_path = argv[1];
