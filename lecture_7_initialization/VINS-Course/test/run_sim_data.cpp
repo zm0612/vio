@@ -27,8 +27,7 @@ std::shared_ptr<System> pSystem;
  */
 void CreatePointsLines(Points &points, Lines &lines) {
     std::ifstream f;
-    f.open(WORK_SPACE_PATH
-           + "/house_model/house.txt");
+    f.open(WORK_SPACE_PATH + "/house_model/house.txt");
 
     while (!f.eof()) {
         std::string s;
@@ -153,7 +152,8 @@ void GenerateData() {
             pw[3] = 1;//改成齐次坐标最后一位
             Eigen::Vector4d pc1 = Twc.inverse() * pw;// T_wc.inverse() * Pw  -- > point in cam frame
 
-            if (pc1(2) < 0) continue;// z必须大于０,在摄像机坐标系前方
+            if (pc1(2) < 0)
+                continue;// z必须大于０,在摄像机坐标系前方
 
             Eigen::Vector2d obs(pc1(0) / pc1(2), pc1(1) / pc1(2));
             // if( (obs(0)*460 + 255) < params.image_h && ( obs(0) * 460 + 255) > 0 &&
@@ -184,7 +184,8 @@ void GenerateData() {
             Eigen::Vector4d pc1 = Twc.inverse() * line_pt.first;// T_wc.inverse() * Pw  -- > point in cam frame
             Eigen::Vector4d pc2 = Twc.inverse() * line_pt.second;// T_wc.inverse() * Pw  -- > point in cam frame
 
-            if (pc1(2) < 0 || pc2(2) < 0) continue;// z必须大于０,在摄像机坐标系前方
+            if (pc1(2) < 0 || pc2(2) < 0)
+                continue;// z必须大于０,在摄像机坐标系前方
 
             Eigen::Vector4d obs(pc1(0) / pc1(2), pc1(1) / pc1(2),
                                 pc2(0) / pc2(2), pc2(1) / pc2(2));
@@ -202,7 +203,7 @@ void GenerateData() {
 }
 
 void PubImuData() {
-    string sImu_data_file = WORK_SPACE_PATH + "/bin/imu_pose_noise.txt";//带噪声的IMU数据的路径
+    string sImu_data_file = WORK_SPACE_PATH + "/bin/imu_pose.txt";//带噪声的IMU数据的路径
     cout << "1 PubImuData start sImu_data_filea: " << sImu_data_file << endl;
     ifstream fsImu;//文件流对象
     fsImu.open(sImu_data_file.c_str());
@@ -262,8 +263,8 @@ void PubImageData() {
         // all_points_ 文件存储的是house模型的线特征，每行4个数，对应该线两端点在归一化平面的坐标
         //all_points_  文件每行的内容是 x, y, z, 1, u, v  这里的u v是归一化下的x ,y 不是像素坐标
         //在函数PubSimImageData中会算出具体特征点的像素坐标
-        string all_points_file_name =
-                "/home/nnz/data/vio/bin/keyframe/all_points_" + to_string(n) + ".txt";  //第n个相机对应的观测数据的文件名
+        string all_points_file_name = WORK_SPACE_PATH + "/bin/keyframe/all_points_"
+                                      + to_string(n) + ".txt";  //第n个相机对应的观测数据的文件名
         cout << "points_file: " << all_points_file_name << endl;
         vector<cv::Point2f> FeaturePoints;//容器FeaturePoints存放一个相机的特征点(归一化坐标)
         std::ifstream f;
@@ -311,12 +312,12 @@ void PubImageData() {
 int main(int argc, char **argv) {
     GenerateData();
 
-//    if (argc != 2) {
-//        cerr << "./run_sim_data PATH_TO_CONFIG/config \n"
-//             << "For example: ./run_sim_data ../config/" << endl;
-//        return -1;
-//    }
-//    sConfig_path = argv[2];
+    if (argc != 2) {
+        cerr << "./run_sim_data PATH_TO_CONFIG/config \n"
+             << "For example: ./run_sim_data ../config/" << endl;
+        return -1;
+    }
+    sConfig_path = argv[1];
 
     pSystem.reset(new System(sConfig_path));
 
@@ -335,9 +336,8 @@ int main(int argc, char **argv) {
 
     thd_PubImuData.join();
     thd_PubImageData.join();
-
-    // thd_BackEnd.join();
-    // thd_Draw.join();
+    thd_BackEnd.join();
+//    thd_Draw.join();
 
     cout << "main end... see you ..." << endl;
     return 0;

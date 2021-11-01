@@ -8,7 +8,8 @@ using namespace pangolin;
 
 System::System(const string &sConfig_file_)
         : bStart_backend(true) {
-    string sConfig_file = sConfig_file_ + "/euroc_config.yaml";
+//    string sConfig_file = sConfig_file_ + "/euroc_config.yaml";
+    string sConfig_file = sConfig_file_ + "/sim_config.yaml";
 
     cout << "1 System() sConfig_file: " << sConfig_file << endl;
     readParameters(sConfig_file);
@@ -203,12 +204,11 @@ vector<pair<vector<ImuConstPtr>, ImgConstPtr>> System::getMeasurements() {
     return measurements;
 }
 
-void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &FeaturePoints)
-{
+void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &FeaturePoints) {
     if (!init_feature)//
     {
         cout << "1 PubImageData skip the first detected feature, which doesn't contain optical flow speed" << endl;
-        init_feature = 1;
+        init_feature = true;
         return;
     }
 
@@ -221,8 +221,7 @@ void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &Featur
         return;
     }
     // detect unstable camera stream 发现时间戳不连续甚至倒退，提示重新输入
-    if (dStampSec - last_image_time > 1.0 || dStampSec < last_image_time)
-    {
+    if (dStampSec - last_image_time > 1.0 || dStampSec < last_image_time) {
         cerr << "3 PubImageData image discontinue! reset the feature tracker!" << endl;
         first_image_flag = true;
         last_image_time = 0;
@@ -261,8 +260,7 @@ void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &Featur
 //        if (!completed)
 //            break;
 //    }
-    if (PUB_THIS_FRAME)
-    {
+    if (PUB_THIS_FRAME) {
         pub_count++;//pub进VINS的相机的个数
         shared_ptr<IMG_MSG> feature_points(new IMG_MSG());
         //这里的 IMG_MSG 的数据结构如下
@@ -278,24 +276,22 @@ void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &Featur
         feature_points->header = dStampSec;//
         vector<set<int>> hash_ids(NUM_OF_CAM);
         //这里其实默认是1
-        for (int i = 0; i < NUM_OF_CAM; i++)
-        {
+        for (int i = 0; i < NUM_OF_CAM; i++) {
 //            auto &un_pts = trackerData[i].cur_un_pts;// 去畸变的归一化图像坐标
 //            auto &cur_pts = trackerData[i].cur_pts;// 当前追踪到的特征点
 //            auto &ids = trackerData[i].ids;
 //            auto &pts_velocity = trackerData[i].pts_velocity;
             //遍历相机的所有特征点
-            for (unsigned int j = 0; j < FeaturePoints.size(); j++)
-            {
+            for (unsigned int j = 0; j < FeaturePoints.size(); j++) {
 //                if (trackerData[i].track_cnt[j] > 1)
 //                {
 //                    int p_id = ids[j];
-                int p_id = j;
+                int p_id = static_cast<int>(j);
                 hash_ids[i].insert(p_id);
                 double x = FeaturePoints[j].x;
                 double y = FeaturePoints[j].y;
                 double z = 1;
-                feature_points->points.push_back(Vector3d(x, y, z));
+                feature_points->points.emplace_back(x, y, z);
                 feature_points->id_of_point.push_back(p_id * NUM_OF_CAM + i);
 //                    feature_points->u_of_point.push_back(cur_pts[j].x); // 像素坐标
 //                    feature_points->v_of_point.push_back(cur_pts[j].y);
@@ -304,8 +300,8 @@ void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &Featur
 //                    feature_points->velocity_y_of_point.push_back(pts_velocity[j].y);
 
                 cv::Point2f pixel_point;//特征点对应的像素坐标
-                pixel_point.x = 460 * x + 255;
-                pixel_point.y = 460 * y + 255;
+                pixel_point.x = 460.0f * static_cast<float>(x) + 255;
+                pixel_point.y = 460.0f * static_cast<float>(y) + 255;
 
                 feature_points->u_of_point.push_back(pixel_point.x); // 像素坐标
                 feature_points->v_of_point.push_back(pixel_point.y);
@@ -316,13 +312,10 @@ void System::PubSimImageData(double dStampSec, const vector<cv::Point2f> &Featur
             }
 
             // skip the first image; since no optical speed on frist image
-            if (!init_pub)
-            {
+            if (!init_pub) {
                 cout << "4 PubImage init_pub skip the first image!" << endl;
-                init_pub = 1;
-            }
-            else
-            {
+                init_pub = true;
+            } else {
                 m_buf.lock();
                 feature_buf.push(feature_points);
                 // cout << "5 PubImage t : " << fixed << feature_points->header
@@ -484,7 +477,7 @@ void System::Draw() {
     //         .SetBounds(0.0, 1.0, pangolin::Attach::Pix(175), 1.0, -1024.0f / 768.0f)
     //         .SetHandler(new pangolin::Handler3D(s_cam));
 
-    while (pangolin::ShouldQuit() == false) {
+    while (!pangolin::ShouldQuit()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         d_cam.Activate(s_cam);
@@ -578,5 +571,4 @@ void System::Draw() {
             usleep(5000);   // sleep 5 ms
         }
 #endif
-
 }

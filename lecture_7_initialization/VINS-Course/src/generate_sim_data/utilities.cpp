@@ -144,7 +144,7 @@ void SavePose(const std::string &filename, std::vector<MotionData> pose) {
     }
 }
 
-void SavePoseAsTUM(std::string filename, std::vector<MotionData> pose) {
+void SavePoseAsTUM(const std::string& filename, std::vector<MotionData> pose) {
     std::ofstream save_points;
     save_points.setf(std::ios::fixed, std::ios::floatfield);
     save_points.open(filename.c_str());

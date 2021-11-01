@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 #include <queue>
 #include <map>
 #include <thread>
@@ -40,7 +40,7 @@ typedef std::shared_ptr<IMG_MSG const> ImgConstPtr;
 
 class System {
 public:
-    System(const std::string &sConfig_files);
+    explicit System(const std::string &sConfig_files);
 
     ~System();
 
