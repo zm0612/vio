@@ -19,8 +19,11 @@ class EdgeImu : public Edge {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
-    explicit EdgeImu(IntegrationBase* _pre_integration):pre_integration_(_pre_integration),
-          Edge(15, 4, std::vector<std::string>{"VertexPose", "VertexSpeedBias", "VertexPose", "VertexSpeedBias"}) {
+    explicit EdgeImu(IntegrationBase *_pre_integration) : Edge(15, 4,
+                                                               std::vector<std::string>{"VertexPose", "VertexSpeedBias",
+                                                                                        "VertexPose",
+                                                                                        "VertexSpeedBias"}),
+                                                          pre_integration_(_pre_integration) {
 //        if (pre_integration_) {
 //            pre_integration_->GetJacobians(dr_dbg_, dv_dbg_, dv_dba_, dp_dbg_, dp_dba_);
 //            Mat99 cov_meas = pre_integration_->GetCovarianceMeasurement();
@@ -46,15 +49,14 @@ public:
 //    }
 
 private:
-    enum StateOrder
-    {
+    enum StateOrder {
         O_P = 0,
         O_R = 3,
         O_V = 6,
         O_BA = 9,
         O_BG = 12
     };
-    IntegrationBase* pre_integration_;
+    IntegrationBase *pre_integration_;
     static Vec3 gravity_;
 
     Mat33 dp_dba_ = Mat33::Zero();

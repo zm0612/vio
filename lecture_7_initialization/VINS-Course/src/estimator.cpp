@@ -855,8 +855,7 @@ void Estimator::problemSolve() {
     for (int i = 0; i < WINDOW_SIZE + 1; i++) {
         shared_ptr<backend::VertexPose> vertexCam(new backend::VertexPose());
         Eigen::VectorXd pose(7);
-        pose
-                << para_Pose[i][0], para_Pose[i][1], para_Pose[i][2], para_Pose[i][3], para_Pose[i][4], para_Pose[i][5], para_Pose[i][6];
+        pose << para_Pose[i][0], para_Pose[i][1], para_Pose[i][2], para_Pose[i][3], para_Pose[i][4], para_Pose[i][5], para_Pose[i][6];
         vertexCam->SetParameters(pose);
         vertexCams_vec.push_back(vertexCam);
         problem.AddVertex(vertexCam);
